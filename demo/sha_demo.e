@@ -14,7 +14,7 @@ note
 		]"
 	introduction: "[
 		A Secure Hash Algorithm is a cryptographic hash function run on
-		digiral data, computing a result, called the message digest, which
+		digital data, computing a result, called the message digest, which
 		is compared to the known hash to ensure the integrity of the 
 		input data.  For example, comparing the message digest computed
 		for a downloaded file to a published digest shows whether the
@@ -58,7 +58,7 @@ note
 		
 		Note that a small change, the first letter of the input changes
 		to lower case, produces a large change in the computed digest.
-		]
+		]"
 	design: "[
 		This library	divides its classes into an "interface" cluster and a
 		"support" cluster.  The interface cluster contains the classes with
@@ -182,7 +182,10 @@ feature {NONE} -- Initialization
 			t.test_sha_256
 			t.test_sha_224
 			t.test_sha_512
-			t.test_sha_384
+--			t.test_sha_384
+
+			t.hash_text_file
+			t.hash_raw_file
 
 			io.new_line
 			print ("End SHA_DEMO %N")

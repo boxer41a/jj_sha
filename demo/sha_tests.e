@@ -251,76 +251,58 @@ feature -- Test routines (SHA-1)
 
 feature -- Test routines (hash a file)
 
---	hash_text_file
---			-- Test {SHA_1} on a text file
---		local
---			f: PLAIN_TEXT_FILE
---			m: STRING_8
---			sha: SHA_1
---			e: STRING_8
---			d: STRING_8
---		do
---			d := ""
---			create sha
---			create f.make ("abc.dat")
---			if f.exists then
---					-- Read the file
---				f.open_read
---				f.read_stream (f.count)
---				m := f.last_string
---				print ("Data in file = '" + m + "'  byte count = " + f.count.out + "%N")
---				f.close
---					-- Hash the string
---				sha.set_with_string (m)
---				d := sha.digest.as_string
---			end
---			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
---			print ("{SHA_TESTS}.hash_text_file: %N")
---			print ("%T message = " + sha.out + "%N")
---			print ("%T expected = " + e + "%N")
---			print ("%T computed = " + d + "%N")
---			assert (sha.out, d ~ e)
---		end
+	hash_text_file
+			-- Test {SHA_1} on a text file that contains the string "abc".
+		local
+			fn: STRING_8
+			f: PLAIN_TEXT_FILE
+			m: STRING_8
+			sha: SHA_1
+			e: STRING_8
+			d: STRING_8
+		do
+			fn := "abc.txt"
+			create sha
+			create f.make_create_read_write (fn)
+			f.put_string ("abc")
+			f.close
+			sha.set_with_filename (fn)
+			d := sha.digest.as_string
+			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
+			print ("{SHA_TESTS}.hash_text_file: %N")
+			print ("%T message = " + sha.out + "%N")
+			print ("%T expected = " + e + "%N")
+			print ("%T computed = " + d + "%N")
+			assert (sha.out, d ~ e)
+		end
 
---	hash_raw_file
---			-- Test {SHA_1} on a binary file
---		local
---			f, f2: RAW_FILE
-----			m: SHA_MESSAGE [NATURAL_8]
---			sha: SHA_1
---			e: STRING_8
---			d: STRING_8
---			fn: STRING_8
---			i: INTEGER
---			p: MANAGED_POINTER
---		do
---				-- Create the file
---			fn := "abc.raw"
---			create f.make_create_read_write (fn)
---			f.put_string ("abd")
---			f.put_natural_32 (0xFFF0AB80)
---			f.close
---				-- On a Mac, the four bytes in the natural_32 is written to the file
---				-- with the most significant bits first (i.e. little-endian), so the
---				-- output of the bytes that represent the number is reversed.  This
---				-- should not matter because the algorightm simply reads bytes from
---				-- the file in the order they are presented.  (I think.)
-
---			create sha.set_with_filename (fn)
-----			create m.set_with_filename (fn)
-
---				-- Hash the string
-----			sha.set_with_string (m)
-----			d := sha.digest.as_string
-----			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
---			print ("{SHA_TESTS}.hash_raw_file: %N")
-----			print ("%T m = " + m.out + "%N")
---			print ("%T See comment in this feature and fix me! %N")
-----			print ("%T message = " + sha.out + "%N")
-----			print ("%T expected = " + e + "%N")
-----			print ("%T computed = " + d + "%N")
-----			assert (sha.out, d ~ e)
---		end
+	hash_raw_file
+			-- Test {SHA_1} on a binary file that contains "abc" and a natural number.
+		local
+			f, f2: RAW_FILE
+			m: SHA_MESSAGE [NATURAL_8]
+			sha: SHA_1
+			e: STRING_8
+			d: STRING_8
+			fn: STRING_8
+			i: INTEGER
+			p: MANAGED_POINTER
+		do
+				-- Create the file
+			fn := "abc.raw"
+			create f.make_create_read_write (fn)
+			f.put_string ("abc")
+			f.put_natural_32 (0xFFF0AB80)
+			f.close
+			create sha.set_with_filename (fn)
+			d := sha.digest.as_string
+			e := "a42047ef 4571beb0 8e8810ed 65ef39b7 6a6587b9"
+			print ("{SHA_TESTS}.hash_raw_file: %N")
+			print ("%T message = " + sha.out + "%N")
+			print ("%T expected = " + e + "%N")
+			print ("%T computed = " + d + "%N")
+			assert (sha.out, d ~ e)
+		end
 
 
 end
