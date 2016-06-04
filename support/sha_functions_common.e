@@ -3,7 +3,7 @@ note
 		Base class for SHA (Secure Hash Algorithms) generator classes which
 		produce a multi-bit `digest' from a string `message'.  Some of these
 		functions only apply to a subset of the descendent classes.
-		
+
 		See FIPS Pub 180-4 (Mar 2012).
 		]"
 	author: "Jimmy J. Johnson"
@@ -65,21 +65,21 @@ feature {NONE} -- Basic operations
 
 	ch (x, y, z: like word_type): like word_type
 			-- The "Ch(x,y,z)" function as defined in
-			-- FIBS Pub 180-4 (Mar 2012) pages 10-11
+			-- FIBS Pub 180-4 (Mar 2012) pages 10-11.
 		do
 			Result := (x & y).bit_xor (x.bit_not & z)
 		end
 
 	maj (x, y, z: like word_type): like word_type
 			-- The "Maj(x,y,z)" function as defined in
-			-- FIBS Pub 180-4 (Mar 2012) pages 10-11
+			-- FIBS Pub 180-4 (Mar 2012) pages 10-11.
 		do
 			Result := ((x & y).bit_xor (x & z)).bit_xor (y & z)
 		end
 
 	w_sub_t (t, i: INTEGER): like word_type
 			-- The `t'-th word from the schedule (i.e. `blocks') of the hash
-			-- for i-th block
+			-- for i-th block.
 		require
 			t_big_enough: t >= 0
 			t_small_enough: t <= Upper_index
@@ -91,8 +91,9 @@ feature {NONE} -- Basic operations
 feature {NONE} -- Implementation (Constants array)
 
 	Upper_index: INTEGER
-			-- One less than the number of intermediate hash calculations performed
-			-- by the algorithm; the index of the last calculation or accessed word
+			-- One less than the number of intermediate hash calculations
+			-- performed by the algorithm; the index of the last calculation
+			-- or accessed word.
 		deferred
 		ensure
 			valid_result: Result = 79 or Result = 63
@@ -121,11 +122,11 @@ feature {NONE} -- Implementation (Constants array)
 		end
 
 	message_schedule: ARRAY [detachable like word_type_reference]
-			-- The message schedule for this hash iteration
-			-- This allows dynamic programming, saving values as they are calculated
+			-- The message schedule for this hash iteration.  This feature
+			-- allows dynamic programming, saving values as they are calculated.
 
 	new_word_ref (a_word: like word_type): CELL [like word_type]
-			-- Create a new reference containing `a_word' stored in `blocks'
+			-- Create a new reference containing `a_word' stored in `blocks'.
 		require
 			word_exists: a_word /= Void
 		do

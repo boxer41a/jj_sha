@@ -56,7 +56,8 @@ feature {NONE} -- Basic operations
 				until i > blocks.count
 				loop
 					message_schedule.clear_all
-							-- Step 2:  Initilize the working variables with the (i-1)st hash value
+							-- Step 2:  Initilize the working variables with
+							-- the (i-1)st hash value
 					a := di.word_0
 					b := di.word_1
 					c := di.word_2
@@ -107,16 +108,15 @@ feature {NONE} -- Basic operations
 		end
 
 	parity (x, y, z: like word_type): like word_type
-			-- The "Parity(x,y,z)" function as defined in
-			-- FIBS Pub 180-4 (Mar 2012) pages 10-11
-			-- Used in SHA-1 calculations only
+			-- The "Parity(x,y,z)" function as defined in FIBS Pub 180-4
+			-- (Mar 2012) pages 10-11 Used in SHA-1 calculations only.
 		do
 			Result := (x.bit_xor (y)).bit_xor (z)
 		end
 
 	f_sub_t (t: INTEGER; x, y, z: like word_type): like word_type
 			-- The function specific to SHA-1, as defined in
-			-- FIBS Pub 180-4 (Mar 2012) pages 10-11
+			-- FIBS Pub 180-4 (Mar 2012) pages 10-11.
 		require
 			t_large_enough: t >= 0
 			t_small_enough: t <= Upper_index
@@ -145,8 +145,8 @@ feature {NONE} -- Basic operations
 		local
 			i: INTEGER
 		once
-				-- This could have been coded as a multi-branch "inspect" statement,
-				-- but using an array is more general
+				-- This could have been coded as a multi-branch "inspect"
+				-- statement, but using an array is more general
 			create Result.make_filled (0, 0, Upper_index)
 				-- 0..19
 			from i := 0
@@ -179,10 +179,10 @@ feature {NONE} -- Basic operations
 		end
 
 	Upper_index: INTEGER = 79
-			-- One less than the number of intermediate hash calculations performed
-			-- by the algorithm; the index of the last calculation or accessed word.
-			-- "SHA-1 uses a sequence of eighty constant 32-bit words..." stored in
-			-- the `big_k' array.
+			-- One less than the number of intermediate hash calculations
+			-- performed by the algorithm; the index of the last calculation
+			-- or accessed word.  "SHA-1 uses a sequence of eighty constant
+			-- 32-bit words..." stored in the `big_k' array.
 			-- See FIPS Pub 180-4 (Mar 2012) page 11.
 
 	copy (other: like Current)

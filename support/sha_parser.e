@@ -1,12 +1,12 @@
 note
 	description: "[
 		Base class for the parser classes which are used to preprocess and pad
-		messages before calculation of a `digest' in the SHA (Secure Hash Algorithm)
-		classes (e.g. SHA_1_GENERATOR and SHA_512_GENERATOR).
+		messages before calculation of a `digest' in the Secure Hash Algorithm
+		(SHA) classes (e.g. {SHA_1_GENERATOR} and {SHA_512_GENERATOR}).
 
-		This class implements `pad', which adds a one and rounds off to a word
-		boundary, and `parse', which places the message bytes into blocks as
-		words in preparation for `calculate'.
+		This class implements `pad', which adds a one to `message' and rounds
+		its size off to a word boundary, and `parse', which places the message
+		bytes into blocks as words in preparation for `calculate'.
 
 		See FIPS Pub 108-4 (Mar 2012)
 		]"
@@ -41,7 +41,8 @@ feature {SHA_PARSER} -- Basic operations
 		local
 			n: NATURAL_8
 		do
-				-- Add the one as the left-most nibble in a byte (i.e. 0x80 or 0b10000000)
+				-- Add the one as the left-most nibble in a byte
+				-- (i.e. 0x80 or 0b10000000)
 			n := 0x80
 			message.extend (n)
 				-- Round off the "word" with zeros
@@ -54,8 +55,9 @@ feature {SHA_PARSER} -- Basic operations
 		end
 
 	parse
-			-- Parse the `message' into "blocks" and "words", placing the words into
-			-- the  `blocks' list and adding the length (in bits) as the last two words.
+			-- Parse the `message' into "blocks" and "words", placing the words
+			-- into the  `blocks' list and adding the length (in bits) as the
+			-- last two words.
 			-- See FIBs Pub 180-4 (Mar 2012).
 		local
 			fbc: INTEGER				-- full block count
@@ -115,7 +117,7 @@ feature {SHA_PARSER} -- Basic operations
 		end
 
 	words_per_message: INTEGER
-			-- The number of words in the padded `message'
+			-- The number of words in the padded `message'.
 		require
 			is_padded: is_padded
 			correct_word_boundaries: message.count \\ bytes_per_word = 0
@@ -135,7 +137,7 @@ feature {SHA_PARSER} -- Basic operations
 feature {NONE} -- Implementation (message parsing)
 
 	blocks: ARRAYED_LIST [like block_type]
-			-- An array of blocks, holding the parsed message
+			-- An array of blocks, holding the parsed message.
 
 	new_block: like block_type
 			-- Create a new block containing 16 words.
@@ -152,7 +154,7 @@ feature {NONE} -- Anchors
 
 	block_type: ARRAY [like word_type]
 			-- The type of the N blocks (512-bits or 1024-bits), each made
-			-- of 16 [32-bit or 64-bit] words
+			-- of 16 [32-bit or 64-bit] words.
 			-- Anchor for type used by the SHA calculations.
 			-- Not to be called; just used to anchor types.
 			-- Declared as a feature to avoid adding an attribute.

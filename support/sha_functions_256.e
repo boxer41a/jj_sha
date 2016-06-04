@@ -1,7 +1,7 @@
 note
 	description: "[
 		Functions specific to SHA-224 and SHA SHA-256 calculations.
-		
+
 		See FIPS Pub 180-4 (Mar 2012).
 		]"
 	author: "Jimmy J. Johnson"
@@ -56,11 +56,11 @@ feature {NONE} -- Basic operations
 				from i := 1
 				until i > blocks.count
 				loop
-							-- Step 1:  W_sub_t is calculated on the fly and memoized.
+						-- Step 1:  W_sub_t calculated on the fly and memoized.
 					message_schedule.clear_all
-							-- Step 2:  Initilize the working variables with the (i-1)st
-							-- hash value (i.e. the values from the previous iteration);
-							-- the values are modified with `set_all' below.
+						-- Step 2:  Initilize the working variables with the
+						-- (i-1)st hash value (i.e. the values from the previous
+						-- iteration); modified below with `set_all'.
 					a := di.word_0
 					b := di.word_1
 					c := di.word_2
@@ -85,7 +85,7 @@ feature {NONE} -- Basic operations
 						a := big_t_one + big_t_two
 						t := t + 1
 					end
-							-- Step 4:  Compute the i-th intermedate hash value H(i)
+						-- Step 4:  Compute the i-th intermediate hash value H(i)
 					di.set_all (a + di.word_0, b + di.word_1, c + di.word_2, d + di.word_3,
 								 e + di.word_4, f + di.word_5, g + di.word_6, h + di.word_7)
 					i := i + 1
@@ -177,10 +177,10 @@ feature {NONE} -- Basic operations
 		end
 
 	Upper_index: INTEGER = 63
-			-- One less than the number of intermediate hash calculations performed
-			-- by the algorithm; the index of the last calculation or accessed word.
-			-- "SHA-224 and SHA-256 use the same sequence of sixty-four constant 32-bit 
-			-- words..." stored in the `big_k' array.
+			-- One less than the number of intermediate hash calculations
+			-- performed by the algorithm; the index of the last calculation
+			-- or accessed word.  "SHA-224 and SHA-256 use the same sequence of
+			-- sixty-four constant 32-bit words..." stored in the `big_k' array.
 			-- See FIPS Pub 180-4 (Mar 2012) page 11.
 
 	big_k: ARRAY [NATURAL_32]

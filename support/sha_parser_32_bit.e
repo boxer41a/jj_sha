@@ -1,10 +1,10 @@
 note
 	description: "[
-		Class needed to give a concrete type to the generic of SHA_PARSER, so
+		Class needed to give a concrete type to the generic of {SHA_PARSER}, so
 		`set_length_imp' and `i_th_word' will work correctly.  Otherwise, the
 		features could not convert the bytes to the correct types, because
-		prior to this class the `word_type' is JJ_NATURAL.
-		
+		prior to this class the `word_type' is {JJ_NATURAL}.
+
 		See FIPS Pub 108-4 (Mar 2012)
 		]"
 	author: "Jimmy J. Johnson"
@@ -23,13 +23,14 @@ feature -- Access
 feature {NONE} -- Implementation (message parsing)
 
 	set_length_imp
-			-- Record the number of bits into `length_imp'; called after initialization.
+			-- Record the number of bits into `length_imp'; called after
+			-- initialization.
 		do
 			length_imp := [word_zero, (message.count * 8).as_natural_32]
 		end
 
 	i_th_word (a_index: INTEGER): like word_type
-			-- The `a_index'th word of the `message'
+			-- The `a_index'th word of the `message'.
 		local
 			i: INTEGER
 			b: NATURAL_8

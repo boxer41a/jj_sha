@@ -1,7 +1,7 @@
 note
 	description: "[
 		Functions specific to SHA-384, SHA-512, SHA-512/224, and SHA-512/256 calculations.
-		
+
 		See FIPS Pub 180-4 (Mar 2012).
 		]"
 	author: "Jimmy J. Johnson"
@@ -184,10 +184,11 @@ feature {NONE} -- Basic operations
 		end
 
 	Upper_index: INTEGER = 79
-			-- One less than the number of intermediate hash calculations performed
-			-- by the algorithm; the index of the last calculation or accessed word.
-			-- "SHA-384, SHA-512, SHA-512/224 and SHA-512/256 use the same sequence of 
-			-- eighty constant64-bit words	..."	 stored in feature `big_k'.
+			-- One less than the number of intermediate hash calculations
+			-- performed by the algorithm; the index of the last calculation
+			-- or accessed word.  "SHA-384, SHA-512, SHA-512/224 and SHA-512/256
+			-- use the same sequence of eighty constant64-bit words	..." stored
+			-- in feature `big_k'.
 			-- See FIPS Pub 180-4 (Mar 2012) page 12.
 
 	big_k: ARRAY [NATURAL_64]

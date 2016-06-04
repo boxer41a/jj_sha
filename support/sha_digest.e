@@ -1,14 +1,15 @@
 note
 	description: "[
-		Base class defining the various SHA (Secure Hash Algorithms message digests.
-		A message digest, or simply digest, is the result calculated by running a
-		SHA on a string message.  It consists of from five to eight, 32- or 64-bit
-		words, (depending on the algorithm) formatted as a string.
-		
-		This class defines eight NATURAL words used by `calculate' in the SHA_xxx 
-		classes as working variables to compute the hash.  Descendents define the
-		initial hash values and effect `as_hex_string'.
-		
+		Base class defining the various SHA (Secure Hash Algorithms message
+		digests.  A message digest, or simply digest, is the result calculated
+		by running a SHA on a string message.  It consists of five to eight,
+		32- or 64-bit words, (depending on the algorithm) formatted as a string.
+
+		This class defines eight NATURAL working variable words used by feature
+		`calculate' (from the SHA_xxx classes), to compute the hash.  The
+		descendant classes define the initial hash values and effect feature
+		`as_hex_string'.
+
 		See FIPS Pub 180-4, Mar 2012.
 		]"
 	author: "Jimmy J. Johnson"

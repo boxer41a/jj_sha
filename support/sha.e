@@ -1,14 +1,14 @@
 note
 	description: "[
-		Common ancestor class for the various SHA (Secure Hash Algorithm) 
-		classes, such as SHA_1, SHA_256, and SHA_512.
+		Common ancestor class for the various Secure Hash Algorithm (SHA)
+		classes, such as {SHA_1}, {SHA_256}, and {SHA_512}.
 
 		Use `set_with_string or `set_with_filename' to set the text from which
-		an SHA digest is to be calculated.  Call `digest' to get the result 
-		of the calculation which is performed on the first call to `digest'; 
+		an SHA digest is to be calculated.  Call `digest' to get the result
+		of the calculation which is performed on the first call to `digest';
 		subsequent calls look up the previously calculated value.  Calling
 		either `set_with_xxx" feature resets the `is_padded', `is_parsed', and
-		`is_calculated' flags causing the digest to be recalculated on the 
+		`is_calculated' flags causing the digest to be recalculated on the
 		next call to `digest'.
 
 		See FIPS Pub 180-4 (Mar 2012).
@@ -31,7 +31,7 @@ inherit
 feature {NONE} -- Initialization
 
 	default_create
-			-- Create an instance setting the `message_origin' to
+			-- Create an instance, setting the `message_origin' to
 			-- the empty string.
 		do
 			create message.make (256)
@@ -43,7 +43,8 @@ feature {NONE} -- Initialization
 feature -- Initialization
 
 	set_with_string (a_string: STRING_GENERAL)
-			-- Initialize Current from `a_string', breaking the string into bytes.
+			-- Initialize Current from `a_string', breaking the string
+			-- into bytes.
 		local
 			i: INTEGER
 			c: NATURAL_32
@@ -136,7 +137,7 @@ feature -- Access
 			-- The default number of bytes shown by `out'.
 
 	out: STRING_8
-			-- New string containing terse printable representation
+			-- New string containing a terse printable representation
 			-- of current object.
 		local
 			n: INTEGER
@@ -241,7 +242,8 @@ feature {SHA} -- Implementation
 			-- to characters.
 
 	length: TUPLE [w1: like word_type; w2: like word_type]
-			-- The length (in bits) of the original message expressed in two words
+			-- The length (in bits) of the original message expressed in
+			-- two words
 		do
 			check attached length_imp as len then
 				Result := len
@@ -249,16 +251,17 @@ feature {SHA} -- Implementation
 		end
 
 	byte_count: INTEGER
-			-- The number of bytes in `message'
+			-- The number of bytes in `message'.
 		do
 			Result := message.count
 		end
 
 	length_imp: detachable like length
-			-- Implementation of `length' to delay creation
+			-- Implementation of `length' to delay creation.
 
 	set_length_imp
-			-- Calculate the length in bits of the `message' and place in `length_imp'
+			-- Calculate the length in bits of the `message' and place
+			-- in `length_imp'.
 		deferred
 		end
 
@@ -285,8 +288,8 @@ feature {NONE} -- Anchors
 			-- Anchor for type used by the SHA calculations; 32 or 64 bits.
 			-- Not to be called; just used to anchor types.
 			-- Declared as a feature to avoid adding an attribute.
-			-- This should be an ancestor of the NATURAL_xx types, but there is
-			-- no such class.
+			-- This should be an ancestor of the NATURAL_xx types, but there
+			-- is no such class.
 		require
 			not_callable: False
 		do

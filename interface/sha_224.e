@@ -1,9 +1,10 @@
 note
 	description: "[
 		Calculates the SHA-224 multi-bit `digest' for a string `message'.  The
-		`digest' is calculated the same way as SHA-256, but the initial hash values
-		(set in feature `initialize' form class {SHA_DIGEST_224}) are
-		different, and the digest is output as 224 bits (i.e. seven 32-bit words).
+		`digest' is calculated the same way as SHA-256, but the initial hash
+		values (set in feature `initialize' form class {SHA_DIGEST_224}) are
+		different, and the digest is output as 224 bits (i.e. seven 32-bit
+		words).
 
 		Use `set_with_string or `set_with_filename' to set the text from which
 		an SHA digest is to be calculated.  Call `digest' to get the result
