@@ -7,7 +7,7 @@ note
 		It also demonstrates a new class, JJ_NATURAL, inserted below
 		NUMERIC as ancestor to all the NATURAL_xx_REF classes.  The
 		JJ_NATURAL class allows the same functions to work for
-		64 and 32-bit calculations, greatly reducing code duplication.
+		64- and 32-bit calculations, greatly reducing code duplication.
 		 
 		This class is the root of the demo/sha_demo.ecf system.  It
 		runs as an executable or in AutoTest.
@@ -56,8 +56,8 @@ note
 			digest 1 = 0fec050f 02cd6201 e2ef871e cf8f9d94 c1dab7ae
 			digest 2 = faf08572 98136eff 6c72af2f d0b6a9bf c76235a0
 		
-		Note that a small change, the first letter of the input changes
-		to lower case, produces a large change in the computed digest.
+		Note that a small change, the first letter of the input changed
+		to lower case, produced a large change in the computed digest.
 		]"
 	design: "[
 		This library	divides its classes into an "interface" cluster and a
@@ -105,7 +105,7 @@ note
 		
 			{SHA} [G -> {JJ_NATURAL}]}
 				Common ancestor and top of the hierarchy for the various
-				SHA classes.  Declares the features for input to  and 
+				SHA classes.  Declares the features for input to and 
 				output from the algorithms and converts the input (file
 				or string) into a {SHA_MESSAGE}.
 				

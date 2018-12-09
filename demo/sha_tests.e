@@ -256,7 +256,6 @@ feature -- Test routines (hash a file)
 		local
 			fn: STRING_8
 			f: PLAIN_TEXT_FILE
-			m: STRING_8
 			sha: SHA_1
 			e: STRING_8
 			d: STRING_8
@@ -279,14 +278,11 @@ feature -- Test routines (hash a file)
 	hash_raw_file
 			-- Test {SHA_1} on a binary file that contains "abc" and a natural number.
 		local
-			f, f2: RAW_FILE
-			m: SHA_MESSAGE [NATURAL_8]
+			f: RAW_FILE
 			sha: SHA_1
 			e: STRING_8
 			d: STRING_8
 			fn: STRING_8
-			i: INTEGER
-			p: MANAGED_POINTER
 		do
 				-- Create the file
 			fn := "abc.raw"
