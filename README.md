@@ -7,5 +7,5 @@ It depends on the JJ\_NATURAL\_xxx classes found [here](http://github.com/boxer4
 
 To used the example ecf files, checkout the library to a location identified by the envirnment variable "JJ_GITHUB".
 
-![](http://github.com/boxer41a/jj_sha/docs/SHA Classes (parsers).png)
+![](http://github.com/boxer41a/jj_sha/docs/SHA-Classes-(parsers).png)
 
