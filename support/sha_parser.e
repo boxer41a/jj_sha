@@ -144,7 +144,7 @@ feature {NONE} -- Implementation (message parsing)
 			-- A word (i.e. of word_type) contain 32 bits for SHA-1,
 			-- SHA-224, & SHA-25 giving 512-bit blocks; a word contains
 			-- 64 bits for SHA-384, SHA-512, SHA-512/224, and SHA-512/256
-			-- giveing 1024-bit blocks.
+			-- giving 1024-bit blocks.
 			-- FIPS Pub 180-4 (Mar 2012) page 14.
 		do
 			create Result.make_filled (word_zero, 0, 15)

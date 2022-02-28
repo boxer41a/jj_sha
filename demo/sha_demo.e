@@ -186,6 +186,7 @@ feature {NONE} -- Initialization
 
 			t.hash_text_file
 			t.hash_raw_file
+--			t.hash_large_file
 
 			io.new_line
 			print ("End SHA_DEMO %N")

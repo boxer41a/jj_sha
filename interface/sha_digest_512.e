@@ -15,9 +15,6 @@ class
 inherit
 
 	SHA_DIGEST [NATURAL_64]
-		redefine
-			as_hex_string
-		end
 
 create
 	default_create

@@ -300,6 +300,31 @@ feature -- Test routines (hash a file)
 			assert (sha.out, d ~ e)
 		end
 
+	hash_large_file
+		-- Test {SHA-256} from NOOBS file (Raspberry Pi operating system).20015ad")
+--		do
+--			parser := sha_256
+--			parser.set_with_filename ("NOOBS_v3_4_1.zip")
+--			test ("7bb002bc 17689fdd 14a3e81b d733e317 b901746c 65e0c5dc c611f954 b00ecaae")
+--		end
+		local
+			f: RAW_FILE
+			sha: SHA_256
+			e: STRING_8
+			d: STRING_8
+			fn: STRING_8
+		do
+				-- Create the file
+			fn := "NOOBS_v3_4_1.zip"
+			create sha.set_with_filename (fn)
+			d := sha.digest.as_string
+			e := "7bb002bc 17689fdd 14a3e81b d733e317 b901746c 65e0c5dc c611f954 b00ecaae"
+			print ("{SHA_TESTS}.hash_raw_file: %N")
+			print ("%T message = " + sha.out + "%N")
+			print ("%T expected = " + e + "%N")
+			print ("%T computed = " + d + "%N")
+			assert (sha.out, d ~ e)
+		end
 
 end
 
