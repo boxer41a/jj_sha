@@ -13,13 +13,13 @@
 			<concurrency support="none"/>
 			<void_safety support="all" use="all"/>
 		</capability>
-		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf" readonly="false">
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf" readonly="false">
 			<option is_obsolete_routine_type="true">
 				<assertions precondition="true"/>
 			</option>
 		</library>
 		<library name="jj_randoms" location="\Users\jjj\jj_github\jj_randoms\classes\jj_randoms.ecf"/>
-		<library name="testing" location="$ISE_LIBRARY\library\testing\testing-safe.ecf">
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf">
 			<option is_obsolete_routine_type="true">
 				<assertions precondition="true"/>
 			</option>
