@@ -60,12 +60,11 @@ note
 		to lower case, produced a large change in the computed digest.
 		]"
 	design: "[
-		This library	divides its classes into an "interface" cluster and a
-		"support" cluster.  The interface cluster contains the classes with
-		which the programmer interacts; the support cluster contains the
-		classes that perform the actual calculatios.  Each SHA_xxx class
-		produces SHA_DIGEST_xxx, covariantly redefined to follow the type
-		of the SHA_xxx parser.
+		This library has an "interface" cluster and a "support" cluster.
+		The interface cluster contains the classes with	which the programmer
+		interacts; the support cluster contains the classes that perform the
+		actual calculatios.  Each SHA_xxx class produces SHA_DIGEST_xxx, 
+		covariantly redefined to follow the type of the SHA_xxx parser.
 			
 		interface classes:
 		

@@ -18,7 +18,7 @@
 				<assertions precondition="true"/>
 			</option>
 		</library>
-		<library name="jj_randoms" location="\Users\jjj\jj_github\jj_randoms\classes\jj_randoms.ecf"/>
+		<library name="jj_randoms" location="$JJ_GITHUB\jj_randoms\classes\jj_randoms.ecf"/>
 		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf">
 			<option is_obsolete_routine_type="true">
 				<assertions precondition="true"/>
