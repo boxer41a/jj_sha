@@ -10,12 +10,12 @@ note
 	revision: "$Revision$"
 
 class
-	SHA_MESSAGE [G -> JJ_NATURAL]
+	SHA_MESSAGE--[G -> JJ_NATURAL]
 
 inherit
 
 	ARRAYED_LIST [NATURAL_8]
-	
+
 create
 	make
 

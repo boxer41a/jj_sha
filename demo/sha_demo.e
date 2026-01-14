@@ -102,7 +102,7 @@ note
 				
 		support classes:
 		
-			{SHA} [G -> {JJ_NATURAL}]}
+			{SHA_32} [G -> {JJ_NATURAL}]}
 				Common ancestor and top of the hierarchy for the various
 				SHA classes.  Declares the features for input to and 
 				output from the algorithms and converts the input (file
@@ -113,17 +113,17 @@ note
 				the message (as defined by FIPS Pub 180-4 (Mar 2012) to 
 				calculate SHA digests for 32- or 64-bit hashes.
 
-			{SHA_PARSER} [G -> {JJ_NATURAL}]
-				-- Descendent of {SHA} and base class for the parser 
+			{SHA_PARSER_32} [G -> {JJ_NATURAL}]
+				-- Descendent of {SHA_32} and base class for the parser 
 				-- classes.  It preprocess and pads an {SHA_MESSAGE} before
 				-- calculation of a digest. 
 				
 			{SHA_FUNCTIONS_COMMON} [G -> {JJ_NATURAL}]
-				-- This class extends the {SHA_PARSER} class, adding
+				-- This class extends the {SHA_PARSER_32} class, adding
 				-- functions that are common to all the SHA algorithms.
 				
 			{SHA_PARSER_32_BIT} and {SHA_PARSER_64_BIT}
-				-- Descendent of {SHA_PARSER} but with a concrete type
+				-- Descendent of {SHA_PARSER_32} but with a concrete type
 				-- for the generic (either NATURAL_32 or NATURAL_64),
 				-- providing an anchor for features previously defined
 				-- using the {JJ_NATURAL} type.
@@ -177,15 +177,15 @@ feature {NONE} -- Initialization
 			print ("Begin SHA_DEMO %N")
 			io.new_line
 
-			t.test_sha_1
-			t.test_sha_256
-			t.test_sha_224
-			t.test_sha_512
---			t.test_sha_384
+--			t.test_sha_1
+--			t.test_sha_256
+--			t.test_sha_224
+--			t.test_sha_512
+----			t.test_sha_384
 
-			t.hash_text_file
-			t.hash_raw_file
---			t.hash_large_file
+--			t.hash_text_file
+--			t.hash_raw_file
+			t.hash_large_file
 
 			io.new_line
 			print ("End SHA_DEMO %N")

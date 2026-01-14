@@ -36,6 +36,7 @@ feature {NONE} -- Implementation (message parsing)
 			b: NATURAL_8
 			w: NATURAL_64
 		do
+			Result := word_zero
 			from i := 1
 			until i > bytes_per_word
 			loop

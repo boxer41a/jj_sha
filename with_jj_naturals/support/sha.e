@@ -48,6 +48,8 @@ feature -- Initialization
 		local
 			i: INTEGER
 			c: NATURAL_32
+			b: NATURAL_32
+			shift_n: INTEGER
 		do
 			default_create
 			message_origin := a_string
@@ -70,6 +72,70 @@ feature -- Initialization
 					message.extend (a_string.item (i).code.as_natural_8)
 					i := i + 1
 				end
+					-- The commented code below is first attempt to read a string, into
+					-- a {SHA_MESSAGE} implented as an array containing 32-bit
+					-- values instead of 8-bit values.
+--			if a_string.is_string_32 then
+--				from i := 1
+--				until i > a_string.count
+--					c := a_string.item (i).code.as_natural_32
+--					message.extend (c)
+--					i := i + 1
+--				end
+--			elseif a_string.is_string_8 then
+--				from i := 1
+--				until i > a_string.count // 4	-- number of bytes in string // 4
+--				loop
+--					check
+--						at_least_four_bytes_left: i + 4 <= a_string.count
+--							-- because of the mod in the loop exit condition
+--					end
+--						-- Get the four character bytes, shifting as require
+--					c := 0x00000000
+--					from shift_n := 0
+--					until shift_n >= 3
+--					loop
+--						b := a_string.item (i + 1).code.as_natural_32)
+--						c := c.bit_or (b)
+--						c.bit_shift_left (8)
+--						shift_n := shift_n + 1
+--					end
+--						-- Add these 32 bits to the message
+--					message.extend (c)
+--					i := i + 4
+--				end
+--					-- Now account for remaining characters if any
+--				if a_string.count \\ 4 /= 0 then
+--					check
+--						at_least_one_byte_remaining: i <= a_string.count
+--							-- because of above if statement
+--					end
+--					check
+--						less_than_four_bytes_remaining: --a_string.count - i < 4
+--							-- because  ... ?
+--						end
+--						c := 0x00000000
+--						from shift_n = 0
+--						until shift_n >= 3
+--						loop
+--							b := 0x00000000
+--							if i <= a_string.count then
+--									-- There is a character remaining to be read
+--								b := a_string.item (i).code.as_natural_32
+--							else
+--									-- There are no more characters, and still need to shift
+--									-- so go ahead append the bit "1" to the end
+--								b := 0x00000000
+--									-- Fix me how far to shift the one?
+--								is_padded := true
+--							end
+--							c := c.bit_or (b)
+--							c.bit_shift_left (8)
+--							shift_n := shift_n + 1
+--							i := i + 1
+--						end
+--					end
+--				end
 			else
 				check
 					should_not_happen: false then
@@ -127,7 +193,7 @@ feature -- Access
 			end
 		end
 
-	message: SHA_MESSAGE [G]
+	message: SHA_MESSAGE-- [G]
 			-- The list of bytes making up Current; an ARRAY [NATURAL_8].
 
 	out_count: INTEGER_32
@@ -269,6 +335,8 @@ feature {SHA} -- Implementation
 			-- The number of bits in the `word_type'.
 		do
 			Result := word_zero.bit_count
+		ensure
+			valid_result: Result = 32 or Result = 64
 		end
 
 	bytes_per_word: INTEGER

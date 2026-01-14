@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-22-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-22-0 http://www.eiffel.com/developers/xml/configuration-1-22-0.xsd" name="jj_sha_without_genericity_demo" uuid="35F5E5A7-A4DA-4F7E-A294-F098B20BA31A">
+	<target name="jj_sha_without_genericity_demo">
+		<root class="SHA_DEMO" feature="make"/>
+		<option profile="false" warning="warning" is_obsolete_iteration="true" is_obsolete_routine_type="true" syntax="standard" manifest_array_type="mismatch_warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="total_order_on_reals" value="false"/>
+		<setting name="dead_code_removal" value="feature"/>
+		<capability>
+			<catcall_detection support="none"/>
+			<concurrency support="none"/>
+			<void_safety support="all"/>
+		</capability>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf" readonly="false">
+			<option>
+				<assertions precondition="true"/>
+			</option>
+			<class_option class="NUMERIC">
+			</class_option>
+		</library>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf">
+			<option>
+				<assertions precondition="true"/>
+			</option>
+		</library>
+		<cluster name="without_genericity" location="..\">
+			<option is_obsolete_iteration="true">
+			</option>
+			<cluster name="interface" location="..\without_genericity\interface\" recursive="true">
+				<option is_obsolete_iteration="true">
+				</option>
+			</cluster>
+			<cluster name="support" location="..\without_genericity\support\" recursive="true">
+				<option is_obsolete_iteration="true">
+				</option>
+			</cluster>
+		</cluster>
+		<cluster name="jj_sha_demo" location=".\" recursive="true">
+			<option is_obsolete_iteration="true">
+			</option>
+			<file_rule>
+				<exclude>/.svn$</exclude>
+				<exclude>/CVS$</exclude>
+				<exclude>/EIFGENs$</exclude>
+			</file_rule>
+		</cluster>
+	</target>
+</system>

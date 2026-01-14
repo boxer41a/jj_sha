@@ -25,64 +25,64 @@ inherit
 			on_prepare
 		end
 
-feature -- Initialization
+feature {NONE}-- Initialization
 
 	on_prepare
 		do
 			create sha_1
 			create sha_224
 			create sha_256
-			create sha_384
+--			create sha_384
 			create sha_512
-			create sha_512_224
-			create sha_512_256
-			parser := sha_1
+--			create sha_512_224
+--			create sha_512_256
+			parser := sha_256
 			test_name := "not set yet"
 		end
 
 feature {NONE} -- Implementation
-
-	test_name: STRING_8
-			-- The particular test being done
-
-	parser: SHA_FUNCTIONS_COMMON [JJ_NATURAL]
-			-- Polymorphic holder for the particular version being tested
-
-	sha_1: SHA_1
-			-- Parser to produce an SHA-1 digest of a string.
-			-- See class {SHA}.
-
-	sha_224: SHA_224
-			-- Parser to produce an SHA-224 digest of a string.
-			-- See class {SHA}.
-
-	sha_256: SHA_256
-			-- Parser to produce an SHA-256 digest of a string.
-			-- See class {SHA}.
-
-	sha_384: SHA_384
-			-- Parser to produce an SHA-384 digest of a string.
-			-- See class {SHA}.
-
-	sha_512: SHA_512
-			-- Parser to produce an SHA-512 digest of a string.
-			-- See class {SHA}.
-
-	sha_512_224: SHA_512_224
-			-- Parser to produce an SHA-512 (224) digest of a string.
-			-- See class {SHA}.
-
-	sha_512_256: SHA_512_256
-			-- Parser to produce an SHA-512 (256) digest of a string.
-			-- See class {SHA}.
-
-feature -- Basic operations
 
 	print_line
 			-- Draw a seperating line across the page
 		do
 			print ("-------------------------------------------------------- %N")
 		end
+
+	test_name: STRING_8
+			-- The particular test being done
+
+	parser: SHA
+			-- Polymorphic holder for the particular version being tested
+
+	sha_1: SHA_1
+			-- Parser to produce an SHA-1 digest of a string.
+			-- See class {SHA_32}.
+
+	sha_224: SHA_224
+			-- Parser to produce an SHA-224 digest of a string.
+			-- See class {SHA_32}.
+
+	sha_256: SHA_256
+			-- Parser to produce an SHA-256 digest of a string.
+			-- See class {SHA_32}.
+
+--	sha_384: SHA_384
+			-- Parser to produce an SHA-384 digest of a string.
+			-- See class {SHA_32}.
+
+	sha_512: SHA_512
+			-- Parser to produce an SHA-512 digest of a string.
+			-- See class {SHA_32}.
+
+--	sha_512_224: SHA_512_224
+			-- Parser to produce an SHA-512 (224) digest of a string.
+			-- See class {SHA_32}.
+
+--	sha_512_256: SHA_512_256
+			-- Parser to produce an SHA-512 (256) digest of a string.
+			-- See class {SHA_32}.
+
+feature -- Basic operations
 
 	test (a_expected: STRING_8)
 			-- Test if the `parser' produces `a_expected' digest
@@ -151,8 +151,8 @@ feature -- Test routines (SHA-1)
 			test ("9d9d6d43 639baf54 bc62d95e 9804ca4c 03c82163")
 				-- Long message
 			test_name := "sha-1: one million a's"
---			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
---			test ("34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
+----			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
+----			test ("34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 				-- Test "The red fox..."
 			test_name := "sha-1:  The red fox..."
 			parser.set_with_string ("The red fox jumps over the blue dog")
@@ -201,7 +201,6 @@ feature -- Test routines (SHA-1)
 			print_line
 		end
 
-
 	test_sha_512
 		do
 				-- One block
@@ -219,35 +218,35 @@ feature -- Test routines (SHA-1)
 					"501d289e4900f7e4 331b99dec4b5433a c7d329eeb6dd2654 5e96e55b874be909")
 				-- Long message
 			test_name := "sha-512:  one million a's"
---			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
---			test ("e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
---					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b")
+----			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
+----			test ("e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
+----					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b")
 			print_line
 		end
 
-	test_sha_384
-			-- FIPS Pub 108-2 (Aug 2002)
-		do
-				-- One block
-			parser := sha_384
-				-- One block, pages 56-60
-			test_name := "sha-384:  single block"
-			parser.set_with_string ("abc")
-			test ("cb00753f45a35e8b b5a03d699ac65007 272c32ab0eded163 1a8b605a43ff5bed " +
-					"8086072ba1e7cc23 58baeca134c825a7")
-				-- Multi-block, pages 61-70
-			test_name := "sha-384:  multiple blocks"
-			parser.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
-									"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
-			test ("09330c33f71147e8 3d192fc782cd1b47 53111b173b3b05d2 2fa08086e3b0f712 " +
-					"fcc7c71a557e2db9 66c3e9fa91746039")
-				-- Long message, page 70
-			test_name := "sha-384:  one million a's"
-			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-			test ("9d0e1809716474cb 086e834e310a4a1c ed149e9c00f24852 7972cec5704c2a5b " +
-					"07b8b3dc38ecc4eb ae97ddd87f3d8985")
-			print_line
-		end
+--	test_sha_384
+--			-- FIPS Pub 108-2 (Aug 2002)
+--		do
+--				-- One block
+--			parser := sha_384
+--				-- One block, pages 56-60
+--			test_name := "sha-384:  single block"
+--			parser.set_with_string ("abc")
+--			test ("cb00753f45a35e8b b5a03d699ac65007 272c32ab0eded163 1a8b605a43ff5bed " +
+--					"8086072ba1e7cc23 58baeca134c825a7")
+--				-- Multi-block, pages 61-70
+--			test_name := "sha-384:  multiple blocks"
+--			parser.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
+--									"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
+--			test ("09330c33f71147e8 3d192fc782cd1b47 53111b173b3b05d2 2fa08086e3b0f712 " +
+--					"fcc7c71a557e2db9 66c3e9fa91746039")
+--				-- Long message, page 70
+--			test_name := "sha-384:  one million a's"
+--			parser.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
+--			test ("9d0e1809716474cb 086e834e310a4a1c ed149e9c00f24852 7972cec5704c2a5b " +
+--					"07b8b3dc38ecc4eb ae97ddd87f3d8985")
+--			print_line
+--		end
 
 feature -- Test routines (hash a file)
 
@@ -314,11 +313,14 @@ feature -- Test routines (hash a file)
 			d: STRING_8
 			fn: STRING_8
 		do
-				-- Create the file
-			fn := "NOOBS_v3_4_1.zip"
+				-- I picked a downloaded program for which the hash is known
+--			fn := "NOOBS_v3_4_1.zip"
+--			e := "7bb002bc 17689fdd 14a3e81b d733e317 b901746c 65e0c5dc c611f954 b00ecaae"
+			fn := "../../../jj_Downloads/VMware-Fusion-13.6.4-24832108_universal.dmg"
+				-- SHA2 hash from Broadcom
+			e := "a43fd031 165896bc 1b7ecc61 eb07b377 bfc01b01 4c9111b0 8e18a6a1 af121191"
 			create sha.set_with_filename (fn)
 			d := sha.digest.as_string
-			e := "7bb002bc 17689fdd 14a3e81b d733e317 b901746c 65e0c5dc c611f954 b00ecaae"
 			print ("{SHA_TESTS}.hash_raw_file: %N")
 			print ("%T message = " + sha.out + "%N")
 			print ("%T expected = " + e + "%N")

@@ -36,12 +36,12 @@ feature {NONE} -- Implementation (message parsing)
 			b: NATURAL_8
 			w: NATURAL_32
 		do
+			Result := word_zero
 			from i := 1
 			until i > bytes_per_word
 			loop
-				b := message.i_th (((a_index - 1) * bytes_per_word) + i)
-				w := word_zero + b
-				Result := Result + w
+				w := message.i_th (((a_index - 1) * bytes_per_word) + i)
+				Result := Result.bit_or (w)
 				if i < bytes_per_word then
 					Result := Result.bit_shift_left (8)
 				end
