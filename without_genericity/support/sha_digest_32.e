@@ -13,9 +13,7 @@ note
 		See FIPS Pub 180-4, Mar 2012.
 		]"
 	author: "Jimmy J. Johnson"
-	date: "$Date$"
-	revision: "$Revision$"
-
+	date: "1/14/26"
 
 deferred class
 	SHA_DIGEST_32
@@ -23,50 +21,64 @@ deferred class
 inherit
 
 	SHA_DIGEST
+		redefine
+			default_create
+		end
+
+--	SHA_PARSER_32
+--		undefine
+--			out
+--		redefine
+--			default_create
+--		end
+
+feature {NONE} -- Iniitialization
+
+	default_create
+			-- Create an instance
+		do
+			Precursor {SHA_DIGEST}
+--			Precursor {SHA_PARSER_32}
+		end
 
 feature -- Access
 
-	word_0: like word_type
+	word_0: NATURAL_32
 			-- The zero-th working variable (i.e. first word).
-	word_1: like word_type
-	word_2: like word_type
-	word_3: like word_type
-	word_4: like word_type
-	word_5: like word_type
-	word_6: like word_type
-	word_7: like word_type
+	word_1: NATURAL_32
+	word_2: NATURAL_32
+	word_3: NATURAL_32
+	word_4: NATURAL_32
+	word_5: NATURAL_32
+	word_6: NATURAL_32
+	word_7: NATURAL_32
 			-- The 8th working variable; the 8th word of the calculation
 
 feature -- Element change
 
-	initialize
-			-- Set to initial values
-		deferred
-		end
-
 	wipe_out
 			-- Set all words to zero
 		do
-			word_0 := word_0.zero
-			word_1 := word_0.zero
-			word_2 := word_0.zero
-			word_3 := word_0.zero
-			word_4 := word_0.zero
-			word_5 := word_0.zero
-			word_6 := word_0.zero
-			word_7 := word_0.zero
+			word_0 := 0
+			word_1 := 0
+			word_2 := 0
+			word_3 := 0
+			word_4 := 0
+			word_5 := 0
+			word_6 := 0
+			word_7 := 0
 		ensure
-			word_0_is_zero: word_0 ~ word_0.Zero
-			word_1_is_zero: word_1 ~ word_0.Zero
-			word_2_is_zero: word_2 ~ word_0.Zero
-			word_3_is_zero: word_3 ~ word_0.Zero
-			word_4_is_zero: word_4 ~ word_0.Zero
-			word_5_is_zero: word_5 ~ word_0.zero
-			word_6_is_zero: word_6 ~ word_0.zero
-			word_7_is_zero: word_7 ~ word_0.zero
+			word_0_is_zero: word_0 = 0
+			word_1_is_zero: word_1 = 0
+			word_2_is_zero: word_2 = 0
+			word_3_is_zero: word_3 = 0
+			word_4_is_zero: word_4 = 0
+			word_5_is_zero: word_5 =0
+			word_6_is_zero: word_6 =0
+			word_7_is_zero: word_7 = 0
 		end
 
-	set_five (w0, w1, w2, w3, w4: like word_type)
+	set_five (w0, w1, w2, w3, w4: NATURAL_32)
 			-- Assign correspoding values to the first five words (for SHA-1).
 		do
 			word_0 := w0
@@ -76,7 +88,7 @@ feature -- Element change
 			word_4 := w4
 		end
 
-	set_all (w0, w1, w2, w3, w4, w5, w6, w7: like word_type)
+	set_all (w0, w1, w2, w3, w4, w5, w6, w7: NATURAL_32)
 			-- Assign correspoding values to all eight words.
 		do
 			word_0 := w0
@@ -87,21 +99,6 @@ feature -- Element change
 			word_5 := w5
 			word_6 := w6
 			word_7 := w7
-		end
-
-feature {NONE} -- Anchors
-
-	word_type: NATURAL_32
-			-- Anchor for type used by the SHA calculations; 32 or 64 bits.
-			-- Not to be called; just used to anchor types.
-			-- Declared as a feature to avoid adding an attribute.
-		require else
-			not_callable: False
-		do
-			check
-				do_not_call: False then
-					-- Because gives no info; simply used as anchor.
-			end
 		end
 
 end

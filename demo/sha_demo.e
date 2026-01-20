@@ -177,7 +177,7 @@ feature {NONE} -- Initialization
 			print ("Begin SHA_DEMO %N")
 			io.new_line
 
---			t.test_sha_1
+			t.test_sha_1
 --			t.test_sha_256
 --			t.test_sha_224
 --			t.test_sha_512
@@ -185,7 +185,7 @@ feature {NONE} -- Initialization
 
 --			t.hash_text_file
 --			t.hash_raw_file
-			t.hash_large_file
+--			t.hash_large_file
 
 			io.new_line
 			print ("End SHA_DEMO %N")

@@ -8,12 +8,24 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 
-deferred class
-	SHA_FUNCTIONS_1
+class
+	SHA_1_HASHER
 
 inherit
 
-	SHA_PARSER_32
+	SHA_HASHER_32
+		redefine
+			default_create
+		end
+
+feature {NONE} -- Initialization
+
+	default_create
+			-- Initialize Current
+		do
+			Precursor
+			create message_schedule.make_filled (Void, 0, Upper_index)
+		end
 
 feature {NONE} -- Basic operations
 
@@ -24,6 +36,7 @@ feature {NONE} -- Basic operations
 			big_T, a, b, c, d, e: NATURAL_32	-- the working variables
 			i, t: INTEGER
 		do
+			create digest_imp
 			check attached digest_imp as di then
 				di.initialize
 				from i := 1
@@ -79,6 +92,16 @@ feature {NONE} -- Basic operations
 					message_schedule[t] := new_word_ref (Result)
 				end
 			end
+		end
+
+	message_schedule: ARRAY [detachable like new_word_ref]
+			-- The message schedule for this hash iteration.  This feature
+			-- allows dynamic programming, saving values as they are calculated.
+
+	new_word_ref (a_word: NATURAL_32): CELL [NATURAL_32]
+			-- Create a new reference containing `a_word' stored in `blocks'.
+		do
+			create Result.put (a_word)
 		end
 
 	parity (x, y, z: NATURAL_32): NATURAL_32
@@ -158,5 +181,8 @@ feature {NONE} -- Basic operations
 			-- or accessed word.  "SHA-1 uses a sequence of eighty constant
 			-- 32-bit words..." stored in the `big_k' array.
 			-- See FIPS Pub 180-4 (Mar 2012) page 11.
+
+	digest_imp: detachable SHA_DIGEST_1
+			-- Allow dynamic programming in `digest'.
 
 end
