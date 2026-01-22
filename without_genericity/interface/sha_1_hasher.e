@@ -67,6 +67,7 @@ feature {NONE} -- Basic operations
 					i := i + 1
 				end
 			end
+			is_calculated := True
 		end
 
 	w_sub_t (t, i: INTEGER): NATURAL_32

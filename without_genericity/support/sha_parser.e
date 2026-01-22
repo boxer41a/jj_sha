@@ -26,10 +26,7 @@ feature {NONE} -- Initialization
 			-- Initialize Current
 		do
 			Precursor
-			create file_pointer.make (0)
-			create file_message.make_from_string ("")
-			create string_8_message.make_from_string ("")
-			create string_32_message.make_from_string ("")
+			create buffer.make (0)
 		end
 
 	make_with_filename (a_string: READABLE_STRING_8)
@@ -38,20 +35,22 @@ feature {NONE} -- Initialization
 		do
 			default_create
 			set_with_filename (a_string)
-			is_file_parsing := True
+		ensure
+			is_file_parsing: is_file_parsing
 		end
 
-	make_with_string_8 (a_string: READABLE_STRING_GENERAL)
-			-- Create an instance, setting `message_origin' to `a_string'
+	make_with_string (a_string: READABLE_STRING_GENERAL)
+			-- Create an instance, setting `message_string' to `a_string'
 		do
 			default_create
 			set_with_string (a_string)
-			is_file_parsing := False
+		ensure
+			is_string_parsing: is_string_parsing
 		end
 
 feature -- Initialization
 
-	set_with_filename (a_string: READABLE_STRING_8)
+	set_with_filename (a_string: READABLE_STRING_GENERAL)
 			-- Initialize Current and set the `message' to `a_string'
 		require
 			file_exists: (create {RAW_FILE}.make_with_name (a_string)).exists
@@ -60,21 +59,15 @@ feature -- Initialization
 		do
 			default_create
 			create f.make_open_read (a_string)
-			f.read_to_managed_pointer (file_pointer, 0, f.count)
+			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Need an {IMMUTABLE_STRING_8}
-			file_message := create {IMMUTABLE_STRING_8}.make_from_string (a_string)
-
-				-- Set status
-			is_file_parsing := False
-			is_string_8_parsing := True
-			is_string_32_parsing := False
+			 create file_message_imp.make_from_string (a_string)
 				-- Parsing status
 			is_padded := false
 			is_parsed := false
 		ensure
-			not_file_parsing: is_file_parsing
-			is_string_8_parsing: not is_string_8_parsing
-			not_string_32_parsing: not is_string_32_parsing
+			is_file_parsing: is_file_parsing
+			not_string_parsing: not is_string_parsing
 			not_one_padded: not is_one_padded
 			not_padded: not is_padded
 			not_parsed: not is_parsed
@@ -83,42 +76,33 @@ feature -- Initialization
 	set_with_string (a_string: READABLE_STRING_GENERAL)
 			-- Initialize Current and set the `message' to `a_string'
 		local
+			i: INTEGER
+			fn: STRING_8
 			f: RAW_FILE
 		do
 			default_create
-				-- Need an {IMMUTABLE_STRING_8}
-			if attached {READABLE_STRING_8} a_string as s8 then
---				string_8_message := create {IMMUTABLE_STRING_8}.make_from_string (s8)
-		elseif attached {READABLE_STRING_32} a_string as s32 then
-				string_32_message := create {IMMUTABLE_STRING_32}.make_from_string (s32)
-			else
-				check
-					should_not_happen: False
-						-- because that covers all the string types
-				end
-			end
-
-				-- Write the string to a temp file, then process the file as in `set_with_file'
-			create f.make_open_write ("temp_file.raw")
+				-- Save the string so it can't be changed externally
+			 create string_message_imp.make_from_string (a_string)
+				-- Write the string to a temp file
+			fn := "temp_file.raw"
+			create f.make_open_write (fn)
 			from i := 1
 			until i > a_string.count
 			loop
 				f.put_natural_32 (a_string.code (i))
 				i := i + 1
 			end
-
-
-				-- Set status
-			is_file_parsing := False
-			is_string_8_parsing := True
-			is_string_32_parsing := False
+			f.close
+				-- Read the temp file into the `file_pointer'
+			create f.make_open_read (fn)
+			create buffer.make (f.count)
+			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Parsing status
 			is_padded := false
 			is_parsed := false
 		ensure
 			not_file_parsing: not is_file_parsing
-			is_string_8_parsing: is_string_8_parsing
-			not_string_32_parsing: not is_string_32_parsing
+			is_string_8_parsing: is_string_parsing
 			not_one_padded: not is_one_padded
 			not_padded: not is_padded
 			not_parsed: not is_parsed
@@ -130,43 +114,55 @@ feature -- Access
 			-- The string or filename from which to build the `blocks'
 			-- (i.e. the data bytes to be parsed)
 		do
-			if is_string_8_parsing then
-				Result := string_8_message
-			elseif is_string_32_parsing then
-				Result := string_32_message
-			elseif is_file_parsing then
+			if is_file_parsing then
 				Result := file_message
+			elseif is_string_parsing then
+				Result := string_message
 			else
 				check
 					should_not_happen: False then
-						-- because all cases coverd above
+						-- because all cases covered above
 				end
 			end
 		end
 
-	string_8_message: IMMUTABLE_STRING_8
-			-- Used when `set_with_string' recieves a {STRING_8}
+	string_message: IMMUTABLE_STRING_32
+			-- A copy of the string that is used as input
+		require
+			is_string_parsing: is_string_parsing
+		do
+			check attached string_message_imp as s then
+				Result := s
+			end
+		end
 
-	string_32_message: IMMUTABLE_STRING_32
-			-- Used when `set_with_string' recieves a {STRING_32}
+	file_message: IMMUTABLE_STRING_32
+			-- A copy of the filename of a file used as input
+		require
+			is_file_parsing: is_file_parsing
+		do
+			check attached file_message_imp as s then
+				Result := s
+			end
+		end
 
-	file_message: IMMUTABLE_STRING_8
-			-- Used when `set_with_filename' was called
-
-	file_pointer: MANAGED_POINTER
-			-- Used when reading from a file
+	buffer: MANAGED_POINTER
+			-- Used internally as the input buffer
 			-- Set in `set_with_filename'
 
 feature -- Status report
 
 	is_file_parsing: BOOLEAN
-			-- Should the input source be read as a file?
+			-- Is the input source a file?
+		do
+			Result := attached file_message_imp
+		end
 
-	is_string_8_parsing: BOOLEAN
-			-- Should the input source be read as an 8-bit string?
-
-	is_string_32_parsing: BOOLEAN
-			-- Should the input source be read as an 32-bit string?
+	is_string_parsing: BOOLEAN
+			-- Is the input a string?
+		do
+			Result := attached string_message_imp
+		end
 
 	is_one_padded: BOOLEAN
 			-- Has a "one" bit been added to the bits in `blocks'?
@@ -183,18 +179,7 @@ feature -- Query
 	byte_count: INTEGER_32
 			-- The number of bytes that can be read from the input
 		do
-			if is_file_parsing then
-				Result := file_pointer.count
-			elseif is_string_8_parsing then
-				Result := string_8_message.count
-			elseif is_string_32_parsing then
-				Result := string_32_message.count * 4
-			else
-				check
-					should_not_happen: False
-						-- because all cases covered above
-				end
-			end
+			Result := buffer.count
 		end
 
 	word_count: INTEGER_32
@@ -221,94 +206,24 @@ feature -- Query
 			Result := block_count * anchor_block.bytes_per_block < byte_count
 		end
 
-	position_of_word (a_index: INTEGER_32): INTEGER_32
-			-- The position of the `a_index'th word to read from the input string.
-		require
-			index_big_enough: a_index >= 1
-			index_small_enough: a_index <= full_word_count
-		do
-			if a_index = 1 then
-				Result := 1
-			else
-				if is_file_parsing then
-					Result := a_index * anchor_block.bytes_per_word
-				elseif is_string_8_parsing then
-					Result := a_index * anchor_block.bytes_per_word
-				elseif is_string_32_parsing then
-					Result := a_index * (anchor_block.bytes_per_word // anchor_block.items_per_word)
-				else
-					check
-						should_not_happen: False
-							-- because all cases covered above
-					end
-				end
-			end
-		end
-
-	position_of_block (a_index: INTEGER_32): INTEGER_32
-			-- The position (calculated differently for different input types) of
-			-- the beginning of this block in the input stream.
-		do
-			if a_index = 1 then
-				Result := 1
-			else
-				if is_file_parsing then
-					Result := a_index * anchor_block.bytes_per_block
-				elseif is_string_8_parsing then
-					Result := a_index * anchor_block.bytes_per_block
-				elseif is_string_32_parsing then
-					Result := a_index * (anchor_block.bits_per_block // 32)
-				else
-					check
-						should_not_happen: False
-							-- because all cases covered above
-					end
-				end
-			end
-		end
-
 feature {NONE} -- Basic operations
-
-	i_th_file_word (a_index: INTEGER_32): like anchor_block.zero_word
-			-- The `a_index'th word as read from `file_message'
-			-- Deferred because have to read 8-bit values into 32- or 64-bit words,
-			-- and the reading requires bits operations which are not in {NUMERIC}
-		deferred
-		end
-
-	i_th_string_8_word (a_index: INTEGER_32): like anchor_block.zero_word
-			-- The `a_index'th word as read from `string_8_message'
-			-- Deferred because have to read 8-bit values into 32- or 64-bit words,
-			-- and the reading requires bits operations which are not in {NUMERIC}
-		deferred
-		end
-
-	i_th_string_32_word (a_index: INTEGER_32): like anchor_block.zero_word
-			-- The `a_index'th word as read from `string_32_message'
-			-- Deferred because have to read 8-bit values into 32- or 64-bit words,
-			-- and the reading requires bits operations which are not in {NUMERIC}
-		require
-			is_string_32_parsing: is_string_32_parsing
-			position_big_enough: a_index >= 1
-			position_small_enough: a_index <= word_count or else (has_partial_word and a_index <= word_count + 1)
-		deferred
-		end
 
 	i_th_word (a_index: INTEGER_32): like word_anchor
 			-- The `a_index'th word from the input `message'
-		do
-			if is_file_parsing then
-				Result := i_th_file_word (a_index)
-			elseif is_string_8_parsing then
-				Result := i_th_string_8_word (a_index)
-			elseif is_string_32_parsing then
-				Result := i_th_string_32_word (a_index)
-			else
-				check
-					should_not_happen: False
-						-- because all cases covered above
-				end
-			end
+			-- Deferred because have to read 8-bit values into 32- or 64-bit words,
+			-- and the reading requires bits operations which are not in {NUMERIC
+		require
+			index_big_enough: a_index>= 1
+			index_small_enough: a_index <= word_count or else (has_partial_word and then a_index <= word_count + 1)
+		deferred
+		end
+
+	partial_word: NUMERIC
+			-- The last word readable from the input, if the input does not have
+			-- enough bytes to read a full word.
+		require
+			has_partial_word: has_partial_word
+		deferred
 		end
 
 	i_th_block (a_index: INTEGER_32): like block_anchor
@@ -320,14 +235,42 @@ feature {NONE} -- Basic operations
 			i: INTEGER_32
 			w: like word_anchor
 		do
-			bck := new_block
+			Result := new_block
 			from i := 1
 			until i > anchor_block.words_per_block
 			loop
-				w := i_th_word (a_index * i)
+				w := i_th_word (a_index + i)
 				Result.put (w, i - 1)		-- a {SHA_BLOCK} is zero based
 				i := i + 1
 			end
+		ensure
+--			block_is_full: Result.count = anchor_block.words_per_block
+		end
+
+	partial_block: like block_anchor
+			-- The last block, which does not have enough words to fill a block
+		require
+			has_partial_block: has_partial_block
+		local
+			i: INTEGER_32
+			w: like word_anchor
+			n: INTEGER_32
+		do
+			Result := new_block
+			from i := (blocks.count * anchor_block.words_per_block).max (1)
+			until i > word_count
+			loop
+				w := i_th_word (i)
+				Result.put (w, n)
+				n := n + 1
+				i := i + 1
+			end
+			if has_partial_word then
+				w := partial_word
+				Result.put (w, i)
+			end
+		ensure
+--			block_not_full: Result.count < anchor_block.words_per_block
 		end
 
 	parse
@@ -345,10 +288,16 @@ feature {NONE} -- Basic operations
 				i := i + 1
 			end
 			if has_partial_block then
-				read_partial_block
+				b := partial_block
+				blocks.extend (b)
 			end
+			is_parsed := True
+			pad
+		ensure
+			is_one_padded: is_one_padded
+			is_padded: is_padded
+			is_parsed: is_parsed
 		end
-
 
 	pad
 			-- Add a one (really a byte containing a one in the high order bit
@@ -359,21 +308,16 @@ feature {NONE} -- Basic operations
 		deferred
 		ensure
 			is_padded: is_padded
+--			has_full_blocks: across blocks as ic all ic.item.count = anchor_block.words_per_block end
 		end
 
---	parse
---			-- Parse the message into "blocks" usable by the calculations.
---		require
---			not_parsed: not is_parsed
---			is_padded: not is_padded
---		deferred
---		ensure
---			is_parsed: is_parsed
---			is_one_padded: is_one_padded
---			is_padded: is_padded
---		end
-
 feature {NONE} -- Implementation
+
+	file_message_imp: detachable like file_message
+			-- The name of the file if Current is to parse a file
+
+	string_message_imp: detachable like string_message
+			-- The string that Current is to parse
 
 	blocks: ARRAYED_LIST [like block_anchor]
 			-- An array of blocks, holding the parsed message.
@@ -381,6 +325,11 @@ feature {NONE} -- Implementation
 		end
 
 feature {NONE} -- Implementation
+
+	new_block: like block_anchor
+			-- Create a new block of correct type
+		deferred
+		end
 
 	anchor_block: like block_anchor
 			-- Used to create one instance from which to obtain constants
@@ -420,8 +369,8 @@ feature {NONE} -- Implementation
 
 invariant
 
-	is_file_parsing_implication: is_file_parsing implies not (is_string_8_parsing or is_string_32_parsing)
-	is_string_8_parsing_implication: is_string_8_parsing implies not (is_file_parsing or is_string_32_parsing)
-	is_string_32_parsing_implication: is_string_32_parsing implies not (is_file_parsing or is_string_8_parsing)
+	is_file_parsing_implication: is_file_parsing implies not is_string_parsing
+	is_string_parsing_implication: is_string_parsing implies not is_file_parsing
 
+--	is_padded_implication: is_padded implies across blocks as ic all ic.item.count = anchor_block.words_per_block end
 end

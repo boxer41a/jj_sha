@@ -16,6 +16,7 @@ inherit
 	SHA_HASHER
 		undefine
 			default_create,
+			word_anchor,
 			block_anchor
 		end
 

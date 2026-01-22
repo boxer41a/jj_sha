@@ -1,0 +1,5 @@
+Compiler version: 22.05.10.6292 - macosx-x86-64
+Type: Quick_melt
+batch mode: False
+new session: True
+starting date: 01/21/2026 9:14:18.416 PM

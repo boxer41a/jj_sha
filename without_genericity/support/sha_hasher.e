@@ -49,12 +49,6 @@ feature {NONE} -- Basic operations
 			is_calculated: is_calculated
 		end
 
-	parse
-			-- Parse a message into blocks
-			-- Join this class with an {SHA_HASHER} to effect this feature
-		deferred
-		end
-
 feature {NONE} -- Basic operations
 
 	calculate_imp
