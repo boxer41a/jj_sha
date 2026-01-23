@@ -37,7 +37,7 @@ feature -- Access
 			-- The number of bits in Current
 			-- 32 bits / item * 16 items = 512 bits
 
-	bytes_per_block: INTEGER_32 = 128
+	bytes_per_block: INTEGER_32 = 64
 			-- The number of 8-bit bytes in Current
 			-- bit_count bits / (4 bits / byte) = 128
 

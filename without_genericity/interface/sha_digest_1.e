@@ -52,7 +52,7 @@ feature -- Access
 			-- FIPS Pub 180-4 (Mar 20-12) page 18.
 		do
 			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
-						word_2.to_hex_string + " " + word_3.to_hex_string + "" +
+						word_2.to_hex_string + " " + word_3.to_hex_string + " " +
 						word_4.to_hex_string
 		end
 

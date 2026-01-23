@@ -29,6 +29,13 @@ feature {NONE} -- Initialization
 
 feature {NONE} -- Basic operations
 
+	show_hex (t: INTEGER_32; a, b, c, d, e: NATURAL_32)
+			-- For testing
+		do
+			print ("t = %T" + t.out + " : %T" + a.to_hex_string + "%T"+ b.to_hex_string + "%T" + c.to_hex_string)
+			print ("%T" + d.to_hex_string + "%T" + e.to_hex_string + "%N")
+		end
+
 	calculate_imp
 			-- Calculate and make result available in the `digest'
 			-- FIPS Pub 108-4 (Mar 2012).pdf (page 18-20)
@@ -60,10 +67,16 @@ feature {NONE} -- Basic operations
 						c := rotate_left (b, 30)
 						b := a
 						a := big_T
+
+				show_hex (t, a, b, c, d, e)
+
 						t := t + 1
 					end
 							-- Step 4:  Compute the i-th intermedate hash value H(i)
 					di.set_five (a + di.word_0, b + di.word_1, c + di.word_2, d + di.word_3, e + di.word_4)
+
+				show_hex (t, a, b, c, d, e)
+
 					i := i + 1
 				end
 			end

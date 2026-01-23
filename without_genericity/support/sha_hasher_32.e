@@ -12,11 +12,9 @@ deferred class
 inherit
 
 	SHA_PARSER_32
-
-feature -- Status report
-
-	is_calculated: BOOLEAN
-			-- Has the `digest' been calculated?
+		redefine
+			reset_status_flags
+		end
 
 feature -- Access
 
@@ -32,6 +30,20 @@ feature -- Access
 				Result := d
 			end
 		end
+
+feature -- Status setting
+
+	reset_status_flags
+			-- Set parsing and hashing flags to false
+		do
+			Precursor
+			is_calculated := False
+		end
+
+feature -- Status report
+
+	is_calculated: BOOLEAN
+			-- Has the `digest' been calculated?
 
 feature {NONE} -- Basic operations
 
@@ -134,5 +146,5 @@ feature {NONE} -- Implementation
 			-- Allow dynamic programming in `digest'.
 		deferred
 		end
-		
+
 end

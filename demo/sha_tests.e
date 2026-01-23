@@ -152,10 +152,6 @@ feature -- Test routines (SHA-1)
 			test_name := "sha-1: multi-block (62 chars)"
 			hasher.set_with_string ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq123456")
 			test ("9d9d6d43 639baf54 bc62d95e 9804ca4c 03c82163")
-				-- Long message
-			test_name := "sha-1: one million a's"
-----			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-----			test ("34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 				-- Test "The red fox..."
 			test_name := "sha-1:  The red fox..."
 			hasher.set_with_string ("The red fox jumps over the blue dog")
@@ -164,6 +160,10 @@ feature -- Test routines (SHA-1)
 			hasher.set_with_string ("the red fox jumps over the blue dog")
 			test ("faf08572 98136eff 6c72af2f d0b6a9bf c76235a0")
 			print_line
+				-- Long message
+			test_name := "sha-1: one million a's"
+			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
+			test ("34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 		end
 
 --	test_sha_256

@@ -66,10 +66,10 @@ feature -- Initialization
 			create f.make_open_read (a_string)
 			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Need an {IMMUTABLE_STRING_8}
-			 create file_message_imp.make_from_string (a_string)
+			string_message_imp := Void
+			create file_message_imp.make_from_string (a_string)
 				-- Parsing status
-			is_padded := false
-			is_parsed := false
+			reset_status_flags
 		ensure
 			is_file_parsing: is_file_parsing
 			not_string_parsing: not is_string_parsing
@@ -87,15 +87,31 @@ feature -- Initialization
 		do
 			default_create
 				-- Save the string so it can't be changed externally
-			 create string_message_imp.make_from_string (a_string)
+			file_message_imp := Void
+			create string_message_imp.make_from_string (a_string)
 				-- Write the string to a temp file
 			fn := "temp_file.raw"
 			create f.make_open_write (fn)
-			from i := 1
-			until i > a_string.count
-			loop
-				f.put_natural_32 (a_string.code (i))
-				i := i + 1
+				--
+			if attached {READABLE_STRING_8} a_string as s8 then
+				from i := 1
+				until i > s8.count
+				loop
+					f.put_natural_8 (s8.code (i).as_natural_8)
+					i := i + 1
+				end
+			elseif attached {READABLE_STRING_32} a_string as s32 then
+				from i := 1
+				until i > s32.count
+				loop
+					f.put_natural_32 (s32.code (i))
+					i := i + 1
+				end
+			else
+				check
+					should_not_happen: False
+						-- because only two string types
+				end
 			end
 			f.close
 				-- Read the temp file into the `file_pointer'
@@ -103,8 +119,8 @@ feature -- Initialization
 			create buffer.make (f.count)
 			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Parsing status
-			is_padded := false
-			is_parsed := false
+			reset_status_flags
+			show_stats
 		ensure
 			not_file_parsing: not is_file_parsing
 			is_string_8_parsing: is_string_parsing
@@ -112,6 +128,16 @@ feature -- Initialization
 			not_padded: not is_padded
 			not_parsed: not is_parsed
 		end
+
+show_stats
+		-- for testing
+	do
+		print ("byte_count = "+ byte_count.out + "%N")
+		print ("word_count = "+ word_count.out + "%N")
+		print ("block_count = "+ block_count.out + "%N")
+		print ("has_partial_block = "+ has_partial_block.out + "%N")
+		print ("has_partial_word = "+ has_partial_word.out + "%N")
+	end
 
 feature -- Access
 
@@ -149,6 +175,16 @@ feature -- Access
 			check attached file_message_imp as s then
 				Result := s
 			end
+		end
+
+feature -- Status setting
+
+	reset_status_flags
+			-- Set parsing and hashing flags to false
+		do
+			is_one_padded := False
+			is_padded := False
+			is_parsed := False
 		end
 
 feature -- Status report
@@ -252,7 +288,7 @@ feature {NONE} -- Basic operations
 			if b.count > {SHA_BLOCK_32}.words_per_block - 2 then
 					-- There is no room for length, so fill with zeros and make new block
 				from i := b.count
-				until i > {SHA_BLOCK_32}.words_per_block
+				until i >= {SHA_BLOCK_32}.words_per_block
 				loop
 					b.put (0, i)
 					i := i + 1
@@ -269,7 +305,7 @@ feature {NONE} -- Basic operations
 			end
 				-- Now add the length vectot.  Remember, a block is zero-based
 			b.put (0, {SHA_BLOCK_32}.words_per_block - 2)
-			b.put (message.count.as_natural_32, {SHA_BLOCK_32}.words_per_block - 1)
+			b.put ((byte_count * 8).as_natural_32, {SHA_BLOCK_32}.words_per_block - 1)
 			is_padded := True
 		end
 
@@ -278,35 +314,40 @@ feature {NONE} -- Basic operations
 		local
 			i: INTEGER_32
 		do
-			i := (a_index - 1) * {SHA_BLOCK_32}.bytes_per_word
-			Result := buffer.read_natural_32 (i)
+			i := (a_index) * {SHA_BLOCK_32}.bytes_per_word
+--			Result := buffer.read_natural_32 (i)
+--			Result := buffer.read_natural_32_le (i)
+			Result := buffer.read_natural_32_be (i)
 		end
 
 	partial_word: NATURAL_32
 			-- The last word, when the bytes remaining are not enough to fill a word
 		local
 			i: INTEGER_32
+			bc: INTEGER_32		-- count bytes read into this word
 			n8: NATURAL_32
 		do
-			from i := word_count * {SHA_BLOCK_32}.bytes_per_word + 1
-			until i > byte_count
+			from i := word_count * {SHA_BLOCK_32}.bytes_per_word
+			until i > byte_count - 1
 			loop
 				n8 := buffer.read_natural_8 (i)		-- conversion to {NATURAL_32}
+				bc := bc + 1
 				Result := Result.bit_or (n8)
 				Result := Result.bit_shift_left (8)
 				check
-					not_too_many_byte: i < {SHA_BLOCK_32}.bytes_per_word
+					not_too_many_byte: bc < {SHA_BLOCK_32}.bytes_per_word
 						-- because this is a partial word
 				end
 				i := i + 1
 			end
 				-- Now, pad with a one for this special case (don't call `pad_with_one')
-			n8 := 0x80000000
+			n8 := 0x80
 			Result := Result.bit_or (n8)
+			bc := bc + 1
 			is_one_padded := True
 				-- Pad this word with trailing zeros
-			from
-			until i > {SHA_BLOCK_32}.bytes_per_word
+			from i := bc
+			until i >= {SHA_BLOCK_32}.bytes_per_word
 			loop
 				Result := Result.bit_shift_left (8)
 				i := i + 1
@@ -341,15 +382,15 @@ feature {NONE} -- Basic operations
 		local
 			i: INTEGER_32
 			w: NATURAL_32
-			n: INTEGER_32
+			c: INTEGER_32
 		do
 			create Result
-			from i := (blocks.count * {SHA_BLOCK_32}.words_per_block).max (1)
-			until i > word_count
+			from i := blocks.count * {SHA_BLOCK_32}.words_per_block
+			until i >= word_count
 			loop
 				w := i_th_word (i)
-				Result.put (w, n)
-				n := n + 1
+				Result.put (w, c)
+				c := c + 1
 				i := i + 1
 			end
 			if has_partial_word then
