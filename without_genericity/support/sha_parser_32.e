@@ -19,11 +19,9 @@ class
 
 inherit
 
-	SHA_PARSER
+	ANY
 		redefine
-			default_create,
-			word_anchor,
-			block_anchor
+			default_create
 		end
 
 feature {NONE} -- Initialization
@@ -32,7 +30,181 @@ feature {NONE} -- Initialization
 			-- Initialize Current
 		do
 			Precursor
+			create buffer.make (0)
 			create blocks.make (0)
+		end
+
+	make_with_filename (a_string: READABLE_STRING_8)
+			-- Create an instance, setting `message_origin' to `a_string' and
+			-- process the message as a file of bytes.
+		do
+			default_create
+			set_with_filename (a_string)
+		ensure
+			is_file_parsing: is_file_parsing
+		end
+
+	make_with_string (a_string: READABLE_STRING_GENERAL)
+			-- Create an instance, setting `message_string' to `a_string'
+		do
+			default_create
+			set_with_string (a_string)
+		ensure
+			is_string_parsing: is_string_parsing
+		end
+
+feature -- Initialization
+
+	set_with_filename (a_string: READABLE_STRING_GENERAL)
+			-- Initialize Current and set the `message' to `a_string'
+		require
+			file_exists: (create {RAW_FILE}.make_with_name (a_string)).exists
+		local
+			f: RAW_FILE
+		do
+			default_create
+			create f.make_open_read (a_string)
+			f.read_to_managed_pointer (buffer, 0, f.count)
+				-- Need an {IMMUTABLE_STRING_8}
+			 create file_message_imp.make_from_string (a_string)
+				-- Parsing status
+			is_padded := false
+			is_parsed := false
+		ensure
+			is_file_parsing: is_file_parsing
+			not_string_parsing: not is_string_parsing
+			not_one_padded: not is_one_padded
+			not_padded: not is_padded
+			not_parsed: not is_parsed
+		end
+
+	set_with_string (a_string: READABLE_STRING_GENERAL)
+			-- Initialize Current and set the `message' to `a_string'
+		local
+			i: INTEGER
+			fn: STRING_8
+			f: RAW_FILE
+		do
+			default_create
+				-- Save the string so it can't be changed externally
+			 create string_message_imp.make_from_string (a_string)
+				-- Write the string to a temp file
+			fn := "temp_file.raw"
+			create f.make_open_write (fn)
+			from i := 1
+			until i > a_string.count
+			loop
+				f.put_natural_32 (a_string.code (i))
+				i := i + 1
+			end
+			f.close
+				-- Read the temp file into the `file_pointer'
+			create f.make_open_read (fn)
+			create buffer.make (f.count)
+			f.read_to_managed_pointer (buffer, 0, f.count)
+				-- Parsing status
+			is_padded := false
+			is_parsed := false
+		ensure
+			not_file_parsing: not is_file_parsing
+			is_string_8_parsing: is_string_parsing
+			not_one_padded: not is_one_padded
+			not_padded: not is_padded
+			not_parsed: not is_parsed
+		end
+
+feature -- Access
+
+	message: IMMUTABLE_STRING_GENERAL
+			-- The string or filename from which to build the `blocks'
+			-- (i.e. the data bytes to be parsed)
+		do
+			if is_file_parsing then
+				Result := file_message
+			elseif is_string_parsing then
+				Result := string_message
+			else
+				check
+					should_not_happen: False then
+						-- because all cases covered above
+				end
+			end
+		end
+
+	string_message: IMMUTABLE_STRING_32
+			-- A copy of the string that is used as input
+		require
+			is_string_parsing: is_string_parsing
+		do
+			check attached string_message_imp as s then
+				Result := s
+			end
+		end
+
+	file_message: IMMUTABLE_STRING_32
+			-- A copy of the filename of a file used as input
+		require
+			is_file_parsing: is_file_parsing
+		do
+			check attached file_message_imp as s then
+				Result := s
+			end
+		end
+
+feature -- Status report
+
+	is_file_parsing: BOOLEAN
+			-- Is the input source a file?
+		do
+			Result := attached file_message_imp
+		end
+
+	is_string_parsing: BOOLEAN
+			-- Is the input a string?
+		do
+			Result := attached string_message_imp
+		end
+
+	is_one_padded: BOOLEAN
+			-- Has a "one" bit been added to the bits in `blocks'?
+
+	is_padded: BOOLEAN
+			-- Has the message been padded with a "one", zero's, and `length'?
+
+	is_parsed: BOOLEAN
+			-- Has the message been parsed into its corresponding `blocks'?
+			-- Feature `blocks' is defined in {SHA_PARSER_32}.
+
+feature -- Query
+
+	byte_count: INTEGER_32
+			-- The number of bytes that can be read from the input
+		do
+			Result := buffer.count
+		end
+
+	word_count: INTEGER_32
+			-- The number of FULL words that can be read from the input
+		do
+			Result := byte_count // {SHA_BLOCK_32}.bytes_per_word
+		end
+
+	has_partial_word: BOOLEAN
+			-- Does the message contain bytes at the end, but not enough to fill a word?
+		do
+			Result := word_count * {SHA_BLOCK_32}.bytes_per_word < byte_count
+		end
+
+	block_count: INTEGER_32
+			-- The number of FULL blocks that will result from parsing the message.
+		do
+			Result := byte_count // {SHA_BLOCK_32}.bytes_per_block
+		end
+
+	has_partial_block: BOOLEAN
+			-- Does the message contain bytes at the end, but not enough to fill a block?
+		do
+			Result := block_count * {SHA_BLOCK_32}.bytes_per_block < byte_count
 		end
 
 feature {NONE} -- Basic operations
@@ -52,7 +224,7 @@ feature {NONE} -- Basic operations
 			b := blocks.last
 			if b.count < {SHA_BLOCK_32}.words_per_block then
 					-- There is room for one more value.
-				b.put (n, b.count - 1)	-- an {SHA_BLOCK} is zero based
+				b.put (n, b.count)		-- an {SHA_BLOCK} is zero based
 			else
 					-- There is not room, so create a new block
 				create b
@@ -80,9 +252,9 @@ feature {NONE} -- Basic operations
 			if b.count > {SHA_BLOCK_32}.words_per_block - 2 then
 					-- There is no room for length, so fill with zeros and make new block
 				from i := b.count
-				until i >= {SHA_BLOCK_32}.words_per_block
+				until i > {SHA_BLOCK_32}.words_per_block
 				loop
-					b.put (0, i - 1)
+					b.put (0, i)
 					i := i + 1
 				end
 				create b
@@ -92,21 +264,21 @@ feature {NONE} -- Basic operations
 			from i := b.count
 			until i >= {SHA_BLOCK_32}.words_per_block - 2
 			loop
-				b.put (0, i - 1)
+				b.put (0, i)
 				i := i + 1
 			end
 				-- Now add the length vectot.  Remember, a block is zero-based
-			b.put (0, {SHA_BLOCK_32}.words_per_block - 2 - 1)
+			b.put (0, {SHA_BLOCK_32}.words_per_block - 2)
 			b.put (message.count.as_natural_32, {SHA_BLOCK_32}.words_per_block - 1)
 			is_padded := True
 		end
 
-	i_th_word (a_index: INTEGER_32): like word_anchor
+	i_th_word (a_index: INTEGER_32): NATURAL_32
 			-- The `a_index'th word in the `file_pointer' input
 		local
 			i: INTEGER_32
 		do
-			i := (a_index - 1) * anchor_block.bytes_per_word
+			i := (a_index - 1) * {SHA_BLOCK_32}.bytes_per_word
 			Result := buffer.read_natural_32 (i)
 		end
 
@@ -116,14 +288,14 @@ feature {NONE} -- Basic operations
 			i: INTEGER_32
 			n8: NATURAL_32
 		do
-			from i := word_count * anchor_block.bytes_per_word + 1
+			from i := word_count * {SHA_BLOCK_32}.bytes_per_word + 1
 			until i > byte_count
 			loop
 				n8 := buffer.read_natural_8 (i)		-- conversion to {NATURAL_32}
 				Result := Result.bit_or (n8)
 				Result := Result.bit_shift_left (8)
 				check
-					not_too_many_byte: i < anchor_block.bytes_per_word
+					not_too_many_byte: i < {SHA_BLOCK_32}.bytes_per_word
 						-- because this is a partial word
 				end
 				i := i + 1
@@ -134,333 +306,119 @@ feature {NONE} -- Basic operations
 			is_one_padded := True
 				-- Pad this word with trailing zeros
 			from
-			until i > anchor_block.bytes_per_word
+			until i > {SHA_BLOCK_32}.bytes_per_word
 			loop
 				Result := Result.bit_shift_left (8)
 				i := i + 1
 			end
 		end
 
---	partial_block: SHA_BLOCK_32
---			-- The last block, which does not have enough words to fill a block
---		do
---			create Result
+	i_th_block (a_index: INTEGER_32): SHA_BLOCK_32
+			-- The `a_index'-th block from the input stream `message'
+		require
+			index_big_enough: a_index >= 1
+			index_small_enough: a_index <= block_count
+		local
+			i: INTEGER_32
+			w: NATURAL_32
+		do
+			create Result
+			from i := 1
+			until i > {SHA_BLOCK_32}.words_per_block
+			loop
+				w := i_th_word (a_index + i)
+				Result.put (w, i - 1)		-- a {SHA_BLOCK} is zero based
+				i := i + 1
+			end
+		ensure
+--			block_is_full: Result.count = anchor_block.words_per_block
+		end
 
---			check
---				false
---			end
---		end
+	partial_block: SHA_BLOCK_32
+			-- The last block, which does not have enough words to fill a block
+		require
+			has_partial_block: has_partial_block
+		local
+			i: INTEGER_32
+			w: NATURAL_32
+			n: INTEGER_32
+		do
+			create Result
+			from i := (blocks.count * {SHA_BLOCK_32}.words_per_block).max (1)
+			until i > word_count
+			loop
+				w := i_th_word (i)
+				Result.put (w, n)
+				n := n + 1
+				i := i + 1
+			end
+			if has_partial_word then
+				w := partial_word
+				Result.put (w, i)
+			end
+		ensure
+--			block_not_full: Result.count < anchor_block.words_per_block
+		end
 
---	read_block (a_index: INTEGER): SHA_BLOCK_32
---			-- Read the `a_index'th FULL block
---		require
---			has_full_blocks_remaining: block_count (a_position) > 0
---		local
---			i: INTEGER_32
-----			w: NATURAL_32	-- a word
---		do
---			create Result
---			from i := 0
---			until i > {like block_anchor}.words_per_block - 1	-- zero based
---			loop
-----				w := read_word (i)
---				Result.put (read_word (i), i)
---				i := i + 1
---			end
---		end
+	parse
+			-- Place the message into `blocks' for use by hashers
+		local
+			i: INTEGER_32
+			b: SHA_BLOCK_32
+		do
+				-- Read all the full blocks
+			from i := 1
+			until i > block_count
+			loop
+				b := i_th_block (i)
+				blocks.extend (b)
+				i := i + 1
+			end
+			if has_partial_block then
+				b := partial_block
+				blocks.extend (b)
+			end
+			is_parsed := True
+			pad
+		ensure
+			is_one_padded: is_one_padded
+			is_padded: is_padded
+			is_parsed: is_parsed
+		end
 
---	add_full_blocks_from_string
---			-- Read words from `message', filling blocks completely.
---			-- Stop reading when three are not enough words to fill a block
---			-- Return the position to begin reading next words/bytes.
---		do
---			check attached {IMMUTABLE_STRING_32} message as m then
---					-- Each item of the input is 32-bit so just put them into blocks.
---					-- A block contains sixteen 42-bit values
---				fbc := m.count // {SHA_BLOCK_32}.words_per_block
---				from i := 1
---				until i > fbc
---				loop
---					create b
---						-- Remember, a {SHA_BLOCK} is zero-based
---					from j := 0
---					until j > {SHA_BLOCK_32}.words_per_block - 1
---					loop
---						n := m.item (i * j).natural_32_code
---						b.put (n, j)
---						j := j + 1
---					end
---					i := i + 1
---				end
---			check attached {IMMUTABLE_STRING_8} message as m then
---				fbc := m.count // {SHA_BLOCK_32}.bytes_per_block
---				from i := 1
---				until i > fbc
---				loop
---					create b
---					from j := 0
---					until j > 15
---					loop
---							-- Read 4 characters to fill a byte
---						from k := 1
---						until k > {SHA_BLOCK_32}.bytes_per_word
---						loop
---							pos := (i * j + k)
---							c := m.item (pos)
---							n := n.bit_or (c.code.as_natural_32)
---							if k < 4 then
---								n := n.bit_shift_left (8)
---							end
---							k := k + 1
---						end
---						b.put (n, j)
---						j := j + 1
---					end
---					blocks.extend (b)
---					i := i + 1
---		end
-
-
---	parse_string_32
---			-- Parse the `message' into "blocks" and "words", placing the words
---			-- into the  `blocks' list and adding the length (in bits) as the
---			-- last two words.
---			-- See FIBs Pub 180-4 (Mar 2012).
---		require
---			not_file_input: not is_file_parsing
---			is_32_bit_string: attached {IMMUTABLE_STRING_32} message
---		local
---			i, j, pos: INTEGER_32
---			fbc: INTEGER_32		-- full block count
---			rem: INTEGER_32	-- a remainder
---			b: SHA_BLOCK_32
---			n: NATURAL_32
---		do
---			check attached {IMMUTABLE_STRING_32} message as m then
---					-- Each item of the input is 32-bit so just put them into blocks.
---					-- A block contains sixteen 42-bit values
---				fbc := m.count // {SHA_BLOCK_32}.words_per_block
---				from i := 1
---				until i > fbc
---				loop
---					create b
---						-- Remember, a {SHA_BLOCK} is zero-based
---					from j := 0
---					until j > {SHA_BLOCK_32}.words_per_block - 1
---					loop
---						n := m.item (i * j).natural_32_code
---						b.put (n, j)
---						j := j + 1
---					end
---					i := i + 1
---				end
---				rem := m.count \\ {SHA_BLOCK_32}.words_per_block
---				if rem > 0 then
---						-- There are characters on the end that will not completely fill a block
---						-- Get index of first of these remaining characters
---					i := fbc * {SHA_BLOCK_32}.words_per_block + 1
---					check
---						index_big_enough: i >= 1
---						index_small_enough: i <= m.count
---					end
---					create b
---					from
---						j := 0
---						i := i + j
---						pos := i + j
---					invariant
---						i > fbc * {SHA_BLOCK_32}.words_per_block and pos <= m.count and b.count < {SHA_BLOCK_32}.words_per_block
---					variant
---						m.count - pos
---					until pos > m.count
---					loop
---						pos := i + j
---						b.put (m.item (pos).natural_32_code, pos)
---						j := j + 1
---					end
---				end
---			end
---				-- Pad `blocks' with a trailing one bit and add count in last two words of last block
---			pad
---			is_padded := True
---			is_parsed := True
---		ensure
---			is_padded: is_padded
---			is_parsed: is_parsed
---		end
-
---	parse_file
---			-- Produce the `blocks' from the file named in `mesage_origin'
---		require
---			origin_is_file: is_file_parsing
---			filename_not_empty: not message.is_empty
---			filename_not_blank: not message.is_whitespace
---			file_exists: (create {RAW_FILE}.make_with_name (message)).exists
---		local
---			f: RAW_FILE
---			b: SHA_BLOCK_32
---			mp: MANAGED_POINTER
---			fbc: INTEGER_32		-- full bloc count
---			i, j, pos: INTEGER_32
---			rem: INTEGER_32	-- a remainder
---			b_count: INTEGER_32
---			n, n8: NATURAL_32
---		do
---			create f.make_open_read_write (message)
---				-- Create pointer with number of bytes in the file
---			create mp.make (f.count)
---				-- Read the whole file (i.e. number of bytes) into the pointer.
---			f.read_to_managed_pointer (mp, 0, f.count)
---				-- Read in as {NATURAL_32} values
---			fbc := mp.count // {SHA_BLOCK_32}.bytes_per_block
---			from i := 1
---			until i > fbc
---			loop
---					create b
---						-- Remember, a {SHA_BLOCK} is zero-based
---					from j := 0
---					until j > {SHA_BLOCK_32}.words_per_block - 1
---					loop
---						n := mp.read_natural_32 (i * j)
---						b.put (n, j)
---						j := j + 1
---					end
---				i := i + 1
---			end
---			rem := mp.count \\ {SHA_BLOCK_32}.bytes_per_block
---			if rem > 0 then
---					-- The bytes on the end of the {MANAGED_POINTER} are too few
---					-- to  completely fill a block.
---					-- Get index of first of these remaining characters
---				i := fbc * {SHA_BLOCK_32}.words_per_block + 1
---				check
---					index_big_enough: i >= 1
---					index_small_enough: i <= mp.count
---				end
---				create b
---				from
---					j := 0
---					i := i + j
---					pos := i
---				invariant
---					i > fbc * {SHA_BLOCK_32}.words_per_block and pos <= mp.count and b.count < {SHA_BLOCK_32}.words_per_block
---				variant
---					mp.count - (pos)
---				until pos > mp.count
---				loop
---					pos := i + j
---					if pos + {SHA_BLOCK_32}.bits_per_block <= mp.count then
---							-- There is at least one more value with  {SHA_BLOCK_32}.bits_per_word bits.
---						n := mp.read_natural_32 (pos)
---					else
---						check
---							is_some_bytes_remaining: pos + mp.natural_8_bytes <= mp.count
---								-- because would have jumped out earlier if not
---						end
---						check
---							not_full_word_reamining: pos + mp.natural_32_bits > mp.count
---								-- because the if conditional is false	
---						end
---							-- Must read the remaining 1 to 3  bytes and merge into a {NATURAL_32}
---						from
---						until pos > mp.count
---						loop
---							n8 := mp.read_natural_8 (pos)
---							n := n.bit_or (n8)
---							n := n.bit_shift_left (8)
---							pos := pos + mp.natural_8_bits
---							b_count := b_count + 1
---							check
---								not_too_many_bytes_read: b_count < {SHA_BLOCK_32}.bytes_per_word
---									-- because of above logic
---							end
---						end
---							-- Now, pad with a one for this special case (don't call `pad_with_one')
---						n8 := 0x80000000
---						n := n.bit_or (n8)
---						b_count := b_count + 1
---						is_one_padded := True
---						if b_count < {SHA_BLOCK_32}.bytes_per_word then
---								-- Pad this word with zeros
---							from
---							until b_count > {SHA_BLOCK_32}.bytes_per_word
---							loop
---								n := n.bit_shift_left (8)
---								n8 := 0x00000000
---								n := n.bit_or (n8)
---								b_count := b_count + 1
---							end
---						end
---					end
---					b.put (n, j)
---					j := j + 1
---				end
---			end
---				-- Pad `blocks' with a trailing one bit and add count in last two words of last block
---			pad
---			is_padded := True
---			is_parsed := True
---		ensure
---			is_one_padded: is_one_padded
---			is_padded: is_padded
---			is_parsed: is_parsed
---		end
 
 feature {NONE} -- Implementation
 
-	bits_per_word: INTEGER = 32
-			-- The number of bits in the `word_type'.
+--	bits_per_word: INTEGER = 32
+--			-- The number of bits in the `word_type'.
 
-	bytes_per_word: INTEGER = 4
-			-- The number of bytes in the `word_type'.
+--	bytes_per_word: INTEGER = 4
+--			-- The number of bytes in the `word_type'.
+
+feature {NONE} -- Implementation
+
+	file_message_imp: detachable like file_message
+			-- The name of the file if Current is to parse a file
+
+	string_message_imp: detachable like string_message
+			-- The string that Current is to parse
 
 	blocks: ARRAYED_LIST [SHA_BLOCK_32]
 			-- An array of blocks, holding the parsed message.
 
 feature {NONE} -- Implementation
 
-	new_block: SHA_BLOCK_32
-			-- Create a new {SHA_BLOCK_32}
-		do
-			create Result
-		end
-
-	anchor_block: SHA_BLOCK_32
-			-- Used to create one instance from which to obtain constants
-			-- that can't be accessed from a static context
-			-- Redefine as a once feature
-		do
-			create Result
-		end
-
-	word_anchor: NATURAL_32
-			-- Anchor for type used by the SHA calculations; 32 bits.
-			-- Not to be called; just used to anchor types.
-			-- Declared as a feature to avoid adding an attribute.
-			-- This should be an ancestor of the NATURAL_xx types, but there
-			-- is no such class.
-		do
-			check
-				do_not_call: False then
-					-- Because gives no info; simply used as anchor.
-			end
-		end
-
-	block_anchor: SHA_BLOCK_32
-			-- Anchor for type used by the SHA calculations; 32 bits.
-			-- Not to be called; just used to anchor types.
-			-- Declared as a feature to avoid adding an attribute.
-			-- This should be an ancestor of the NATURAL_xx types, but there
-			-- is no such class.
-		do
-			check
-				do_not_call: False then
-					-- Because gives no info; simply used as anchor.
-			end
-		end
+	buffer: MANAGED_POINTER
+			-- Used internally as the input buffer
+			-- Set in `set_with_filename'
 
 invariant
 
+	is_file_parsing_implication: is_file_parsing implies not is_string_parsing
+	is_string_parsing_implication: is_string_parsing implies not is_file_parsing
+
 	is_padded implies is_one_padded
+
+--	is_padded_implication: is_padded implies across blocks as ic all ic.item.count = anchor_block.words_per_block end
 
 end

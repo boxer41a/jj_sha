@@ -54,7 +54,7 @@ feature {NONE} -- Implementation
 --	sha: SHA
 			-- Force a compile for now
 
-	hasher: SHA_HASHER
+	hasher: SHA_1_HASHER
 			-- Polymorphic holder for the particular version being tested
 
 	sha_1_hasher: SHA_1_HASHER
