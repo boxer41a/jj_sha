@@ -20,20 +20,21 @@ deferred class
 
 inherit
 
-	HASHABLE
-		redefine
-			default_create
-		end
+--	HASHABLE
+--		redefine
+--			default_create
+--		end
 
+	SHA_DIGEST
 
-feature {NONE} -- Iniitialization
+--feature {NONE} -- Iniitialization
 
-	default_create
-			-- Create an instance
-		do
-			initialize
---			Precursor {SHA_PARSER_32}
-		end
+--	default_create
+--			-- Create an instance
+--		do
+--			initialize
+----			Precursor {SHA_PARSER_32}
+--		end
 
 feature -- Initialize
 
@@ -55,25 +56,24 @@ feature -- Access
 	word_7: NATURAL_32
 			-- The 8th working variable; the 8th word of the calculation
 
-	as_hex_string: STRING_8
-			-- The words of Current as hexidecimal strings with
-			-- a space between each word.
-		deferred
-		end
+--	as_hex_string: STRING_8
+--			-- The words of Current as hexidecimal strings with
+--			-- a space between each word.
+--		deferred
+--		end
 
-	frozen as_string: STRING_8
-			-- The `as_hex_string' converted to lower case as described
-			-- in FIPS PUB 180-4 (Mar 2012)
-		do
-			Result := as_hex_string.as_lower
-		end
+--	frozen as_string: STRING_8
+--			-- The `as_hex_string' converted to lower case as described
+--			-- in FIPS PUB 180-4 (Mar 2012)
+--		do
+--			Result := as_hex_string.as_lower
+--		end
 
-	hash_code: INTEGER
-			-- Produced from the hash-code of the string representation of Current
-		do
-			Result := as_hex_string.hash_code
-		end
-
+--	hash_code: INTEGER
+--			-- Produced from the hash-code of the string representation of Current
+--		do
+--			Result := as_hex_string.hash_code
+--		end
 
 feature -- Element change
 
