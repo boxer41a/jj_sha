@@ -11,7 +11,7 @@ class
 
 inherit
 
-	ANY
+	SHA_BLOCK
 		redefine
 			default_create
 		end
@@ -21,14 +21,12 @@ feature {NONE} -- Initialization
 	default_create
 			-- Create an instance where each `item' is equal to zero
 		do
+			Precursor
 			create imp.make_filled (0, 0, 15)
-			create indexes_imp.make (16)
+--			create indexes_imp.make (16)
 		end
 
 feature -- Access
-
-	words_per_block: INTEGER_32 = 16
-			-- Number of entries (i.e. words) in a block
 
 	items_per_word: INTEGER_32 = 1
 			-- The number of items (1 or 2) that make up a word
@@ -62,11 +60,11 @@ feature -- Access
 			Result := imp.item (a_index)
 		end
 
-	count: INTEGER_32
-			-- Number of items `put' into Current
-		do
-			Result := indexes_imp.count
-		end
+--	count: INTEGER_32
+--			-- Number of items `put' into Current
+--		do
+--			Result := indexes_imp.count
+--		end
 
 feature -- Basic_operations
 
@@ -78,27 +76,28 @@ feature -- Basic_operations
 			not_index_used: not has_index (a_index)
 		do
 			imp.put (a_value, a_index)
-			indexes_imp.extend (a_index)
+--			indexes_imp.extend (a_index)
+			update_index (a_index)
 		ensure
 			is_inserted: item (a_index) = a_value
 			has_index: has_index (a_index)
 		end
 
-feature -- Query
+--feature -- Query
 
-	has_index (a_index: INTEGER_32): BOOLEAN
-			-- Has a value been added at `a_index'?
-		do
-			Result := indexes_imp.has (a_index)
-		end
+--	has_index (a_index: INTEGER_32): BOOLEAN
+--			-- Has a value been added at `a_index'?
+--		do
+--			Result := indexes_imp.has (a_index)
+--		end
 
 feature {NONE} -- Implementation
 
 	imp: ARRAY [NATURAL_32]
 			-- Implemetation structure to hold the words.	
 
-	indexes_imp: ARRAYED_SET [INTEGER_32]
-			-- To keep track of number of items `put' into Current while maintaining
-			-- and ARRAY implemention
+--	indexes_imp: ARRAYED_SET [INTEGER_32]
+--			-- To keep track of number of items `put' into Current while maintaining
+--			-- and ARRAY implemention
 
 end

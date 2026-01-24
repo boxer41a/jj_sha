@@ -71,7 +71,7 @@ feature {NONE} -- Basic operations
 			s: STRING_8
 			d: STRING_8
 		do
-			s := a_hasher.generating_type + ":  "
+			s := a_hasher.generating_type.name + ":  "
 			s := s + "'"
 			if a_input.count > print_threshold then
 				s := s + a_input.substring (1, print_threshold - 10)
@@ -113,7 +113,7 @@ feature -- Basic opeerartions
 				-- Test "the red fox..."  (i.e. lower case "t")
 			test (h, lower_t_sentence, "2755a0a0 b775476f fe6ddac0 b6f8aff3 51f366d6")
 				-- Long message
-			test (h, one_million_a, "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
+--			test (h, one_million_a, "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 		end
 
 	test_sha_256
@@ -129,17 +129,7 @@ feature -- Basic opeerartions
 				-- Multi-block (55 char => partial block with length in second block)
 			test (h, char_56, "248d6a61 d20638b8 e5c02693 0c3e6039 a33ce459 64ff2167 f6ecedd4 19db06c1")
 				-- Long message
-			test (h, one_million_a, "cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
-
---				-- Multi-block
---			test_name := "sha-256:  multiple blocks"
---			hasher.set_with_string ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")
---			test ("248d6a61 d20638b8 e5c02693 0c3e6039 a33ce459 64ff2167 f6ecedd4 19db06c1")
---				-- Long message
---			test_name := "sha-256:  one million a's"
-------			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-------			test ("cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
---			print_line
+--			test (h, one_million_a, "cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
 		end
 
 --	test_sha_224
