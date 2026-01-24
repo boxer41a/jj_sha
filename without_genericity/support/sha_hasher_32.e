@@ -32,21 +32,6 @@ feature {NONE} -- Initialization
 			create message_schedule.make_filled (Void, 0, Upper_index)
 		end
 
-feature -- Access
-
---	frozen digest: attached like digest_imp
---			-- The result of the computation.
---			-- Reset when `message' is changed.
---		do
---			if not is_calculated then
---				calculate
---				is_calculated := true
---			end
---			check attached digest_imp as d then
---				Result := d
---			end
---		end
-
 feature -- Status setting
 
 	reset_status_flags
@@ -136,10 +121,5 @@ feature {NONE} -- Implementation
 		do
 			create Result.put (a_word)
 		end
-
---	digest_imp: detachable SHA_DIGEST_32
---			-- Allow dynamic programming in `digest'.
---		deferred
---		end
 
 end

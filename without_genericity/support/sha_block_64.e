@@ -1,13 +1,13 @@
 note
 	description: "[
-		Represents one block containing sixteen 32-bit values produced 
-		by SHA_PARSER_32 in the Secure Hash Algorithms.
+		Represents one block containing sixteen 64-bit values produced 
+		by SHA_PARSER_64 in the Secure Hash Algorithms.
 		]"
 	author: "Jimmy J Johnson"
 	date: "1/14/26"
 
 class
-	SHA_BLOCK_32
+	SHA_BLOCK_64
 
 inherit
 
@@ -27,23 +27,23 @@ feature {NONE} -- Initialization
 
 feature -- Access
 
-	items_per_word: INTEGER_32 = 1
+	items_per_word: INTEGER_32 = 2
 			-- The number of items (1 or 2) that make up a word
 
-	bits_per_block: INTEGER_32 = 512
+	bits_per_block: INTEGER_32 = 1024
 			-- The number of bits in Current
 			-- 32 bits / item * 16 items = 512 bits
 
-	bytes_per_block: INTEGER_32 = 64
+	bytes_per_block: INTEGER_32 = 128
 			-- The number of 8-bit bytes in Current
 
-	bytes_per_item: INTEGER_32 = 4
+	bytes_per_item: INTEGER_32 = 8
 			-- The number of bytes in each word
 
-	bytes_per_word: INTEGER_32 = 4
+	bytes_per_word: INTEGER_32 = 8
 			-- The number of bytes in each {NUMERIC} item in the block
 
-	item (a_index: INTEGER_32): NATURAL_32
+	item (a_index: INTEGER_32): NATURAL_64
 			-- The value at `a_index'
 			-- Zero based to work with the {SHA_HASHER} calculations
 		require
@@ -60,7 +60,7 @@ feature -- Access
 
 feature -- Basic_operations
 
-	put (a_value: NATURAL_32; a_index: INTEGER_32)
+	put (a_value: NATURAL_64; a_index: INTEGER_32)
 			-- Replace `a_index'-th entry, if in index interval, by `a_value'.
 		require
 			index_big_enough: a_index >= 0
@@ -76,7 +76,7 @@ feature -- Basic_operations
 
 feature {NONE} -- Implementation
 
-	imp: ARRAY [NATURAL_32]
+	imp: ARRAY [NATURAL_64]
 			-- Implemetation structure to hold the words.	
 
 end

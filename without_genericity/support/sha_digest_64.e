@@ -1,9 +1,9 @@
 note
 	description: "[
-		Base class defining the 32-bit SHA (Secure Hash Algorithms message
+		Base class defining the 64-bit SHA (Secure Hash Algorithms message
 		digests.  A message digest, or simply digest, is the result calculated
 		by running a SHA on a string message.  It consists of five to eight,
-		32-bit words formatted as a string.
+		64-bit words formatted as a string.
 
 		This class defines eight NATURAL working variable words used by feature
 		`calculate' (from the SHA_xxx classes), to compute the hash.  The
@@ -16,7 +16,7 @@ note
 	date: "1/14/26"
 
 deferred class
-	SHA_DIGEST_32
+	SHA_DIGEST_64
 
 inherit
 

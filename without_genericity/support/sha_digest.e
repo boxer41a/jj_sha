@@ -1,5 +1,11 @@
 note
 	description: "[
+		Base class defining the various SHA (Secure Hash Algorithms message
+		digests.  A message digest, or simply digest, is the result calculated
+		by running a SHA on a string message.  It consists of five to eight,
+		32- or 64-bit words, (depending on the algorithm) formatted as a string.
+
+
 		Base class for {SHA_DIGEST_32} and {SHA_DIGEST_64}, the 32-bit
 		and 64-bit implementaion of a message digest as described in:
 		

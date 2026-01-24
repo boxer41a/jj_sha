@@ -95,17 +95,6 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	update_index (a_index: INTEGER_32)
-			-- Add `a_index' to the `indexes_imp' to indicate that the `a_index'
-			-- has been used.
-		require
-			not_has_index: not has_index (a_index)
-		do
-			indexes_imp.extend (a_index)
-		ensure
-			has_index: has_index (a_index)
-		end
-
 	indexes_imp: ARRAYED_SET [INTEGER_32]
 			-- To keep track of number of items `put' into Current while maintaining
 			-- the ARRAY implemention
