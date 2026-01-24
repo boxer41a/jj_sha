@@ -13,7 +13,17 @@ inherit
 
 	SHA_PARSER_32
 		redefine
+			default_create,
 			reset_status_flags
+		end
+
+feature {NONE} -- Initialization
+
+	default_create
+			-- Initialize Current
+		do
+			Precursor
+			create message_schedule.make_filled (Void, 0, Upper_index)
 		end
 
 feature -- Access
@@ -131,7 +141,7 @@ feature {NONE} -- Basic operations
 		deferred
 		end
 
-	Upper_index: INTEGER
+	Upper_index: INTEGER_32
 			-- One less than the number of intermediate hash calculations
 			-- performed by the algorithm; the index of the last calculation
 			-- or accessed word.
@@ -141,6 +151,16 @@ feature {NONE} -- Basic operations
 		end
 
 feature {NONE} -- Implementation
+
+	message_schedule: ARRAY [detachable like new_word_ref]
+			-- The message schedule for this hash iteration.  This feature
+			-- allows dynamic programming, saving values as they are calculated.
+
+	new_word_ref (a_word: NATURAL_32): CELL [NATURAL_32]
+			-- Create a new reference containing `a_word' stored in `blocks'.
+		do
+			create Result.put (a_word)
+		end
 
 	digest_imp: detachable SHA_DIGEST_32
 			-- Allow dynamic programming in `digest'.

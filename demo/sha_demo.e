@@ -4,11 +4,6 @@ note
 		and test the SHA-xxx classes, which implement secure hash
 		algorithms as described in FIPS Pub 180-4 (Mar 2012).
 		
-		It also demonstrates a new class, JJ_NATURAL, inserted below
-		NUMERIC as ancestor to all the NATURAL_xx_REF classes.  The
-		JJ_NATURAL class allows the same functions to work for
-		64- and 32-bit calculations, greatly reducing code duplication.
-		 
 		This class is the root of the demo/sha_demo.ecf system.  It
 		runs as an executable or in AutoTest.
 		]"
@@ -22,10 +17,6 @@ note
 		input string/file produces a large change in the output digest.
 		]"
 	dependencies: "[
-		A project using these SHA classes must include the "override" 
-		cluster from the jj_naturals project in order to override the
-		NATURAL_xx classes in the Elks/kernel.
-		(See github.com/boxer41a/jj_naturals.)
 		]"
 	example: "[	
 		The intended usage pattern is to create an object of the type
@@ -178,7 +169,7 @@ feature {NONE} -- Initialization
 			io.new_line
 
 			t.test_sha_1
---			t.test_sha_256
+			t.test_sha_256
 --			t.test_sha_224
 --			t.test_sha_512
 ----			t.test_sha_384

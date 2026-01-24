@@ -1,16 +1,15 @@
 note
 	description: "[
 		Used as the working variables and the result of Secure Hash
-		Algorithm SHA-1.
+		Algorithm {SHA_1_HASHER}.
 
 		See FIPS Pub 180-4, Mar 2012.
 		]"
 	author: "Jimmy J. Johnson"
-	date: "$Date$"
-	revision: "$Revision$"
+	date: "1/23/26"
 
 class
-	SHA_DIGEST_1
+	SHA_1_DIGEST
 
 inherit
 

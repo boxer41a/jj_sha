@@ -14,18 +14,6 @@ class
 inherit
 
 	SHA_HASHER_32
-		redefine
-			default_create
-		end
-
-feature {NONE} -- Initialization
-
-	default_create
-			-- Initialize Current
-		do
-			Precursor
-			create message_schedule.make_filled (Void, 0, Upper_index)
-		end
 
 feature {NONE} -- Basic operations
 
@@ -67,16 +55,10 @@ feature {NONE} -- Basic operations
 						c := rotate_left (b, 30)
 						b := a
 						a := big_T
-
-				show_hex (t, a, b, c, d, e)
-
 						t := t + 1
 					end
 							-- Step 4:  Compute the i-th intermedate hash value H(i)
 					di.set_five (a + di.word_0, b + di.word_1, c + di.word_2, d + di.word_3, e + di.word_4)
-
-				show_hex (t, a, b, c, d, e)
-
 					i := i + 1
 				end
 			end
@@ -106,16 +88,6 @@ feature {NONE} -- Basic operations
 					message_schedule[t] := new_word_ref (Result)
 				end
 			end
-		end
-
-	message_schedule: ARRAY [detachable like new_word_ref]
-			-- The message schedule for this hash iteration.  This feature
-			-- allows dynamic programming, saving values as they are calculated.
-
-	new_word_ref (a_word: NATURAL_32): CELL [NATURAL_32]
-			-- Create a new reference containing `a_word' stored in `blocks'.
-		do
-			create Result.put (a_word)
 		end
 
 	parity (x, y, z: NATURAL_32): NATURAL_32
@@ -196,7 +168,7 @@ feature {NONE} -- Basic operations
 			-- 32-bit words..." stored in the `big_k' array.
 			-- See FIPS Pub 180-4 (Mar 2012) page 11.
 
-	digest_imp: detachable SHA_DIGEST_1
+	digest_imp: detachable SHA_1_DIGEST
 			-- Allow dynamic programming in `digest'.
 
 end

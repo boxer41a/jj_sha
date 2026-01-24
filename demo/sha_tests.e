@@ -1,19 +1,9 @@
 note
 	description: "[
-		Eiffel tests that can be executed by testing tool.
-
-		Each `test_sha_xxx' features follow this pattern:
-			test_name := "sha-1: single block"
-			hasher.set_with_string ("abc")
-			test ("a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d")
-		Feature test prints the `test_name' along with the expected
-		and computed digest values and calls assert to perform the
-		actual test.
+		Eiffel tests on the SHA classes that can be executed by testing tool.
 	]"
 	author: "Jimmy J. Johnson"
-	date: "$Date$"
-	revision: "$Revision$"
-	testing: "type/manual"
+	date: "1/23/26"
 
 class
 	SHA_TESTS
@@ -21,168 +11,136 @@ class
 inherit
 
 	EQA_TEST_SET
-		redefine
-			on_prepare
-		end
 
 feature {NONE}-- Initialization
 
-	on_prepare
-		do
-			create sha_1_hasher
---			create sha_224
---			create sha_256
---			create sha_384
---			create sha_512
---			create sha_512_224
---			create sha_512_256
-			hasher := sha_1_hasher
-			test_name := "not set yet"
+	abc: STRING_8
+			-- The string "abc"
+		once
+			Result := "abc"
+		end
+
+	char_56: STRING_8
+			-- A string with 56 characters
+			-- A partial block, but with add second block for length vector
+		once
+			Result := "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
+		end
+
+	char_62: STRING_8
+			-- A string with 62 characters
+			-- Results in one full block and a partial block.
+		once
+			Result := "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq123456"
+		end
+
+	sentence: STRING_8
+			-- A sentence "The red fox..."
+		once
+			Result := "The red fox jumps over the blue dog."
+		end
+
+	lower_t_sentence: STRING_8
+			-- Same as `the_red_fox_sentence" but with a lower-case "t"
+		once
+			Result := "the red fox jumps over the blue dog."
+		end
+
+	one_million_a: STRING_8
+			-- A string containing 1,000,000 "a" characters
+		once
+			create Result.make_filled ('a', 1_000_000)
 		end
 
 feature {NONE} -- Implementation
 
-	print_line
+	print_header (a_string: STRING_8)
 			-- Draw a seperating line across the page
 		do
-			print ("-------------------------------------------------------- %N")
+			print ("%N------------- " + a_string + " ------------------------------------------- %N%N")
 		end
 
-	test_name: STRING_8
-			-- The particular test being done
+	print_threshold: INTEGER_32 = 30
+			-- Print only first charachters input strings
 
---	sha: SHA
-			-- Force a compile for now
+feature {NONE} -- Basic operations
 
-	hasher: SHA_1_HASHER
-			-- Polymorphic holder for the particular version being tested
-
-	sha_1_hasher: SHA_1_HASHER
-			-- Parser to produce an SHA-1 digest of a string.
-			-- See class {SHA_32}.
-
---	sha_224: SHA_224
-			-- Parser to produce an SHA-224 digest of a string.
-			-- See class {SHA_32}.
-
---	sha_256: SHA_256
-			-- Parser to produce an SHA-256 digest of a string.
-			-- See class {SHA_32}.
-
---	sha_384: SHA_384
-			-- Parser to produce an SHA-384 digest of a string.
-			-- See class {SHA_32}.
-
---	sha_512: SHA_512
-			-- Parser to produce an SHA-512 digest of a string.
-			-- See class {SHA_32}.
-
---	sha_512_224: SHA_512_224
-			-- Parser to produce an SHA-512 (224) digest of a string.
-			-- See class {SHA_32}.
-
---	sha_512_256: SHA_512_256
-			-- Parser to produce an SHA-512 (256) digest of a string.
-			-- See class {SHA_32}.
-
-feature -- Basic operations
-
-	test (a_expected: STRING_8)
+	test (a_hasher: SHA_HASHER_32; a_input, a_expected: STRING_8)
 			-- Test if the `hasher' produces `a_expected' digest
 		local
 			s: STRING_8
 			d: STRING_8
 		do
-			s := hasher.generating_type + "." + test_name
-			d := hasher.digest.as_string
-			print (s + "%N")
-			print ("%T expected = " + a_expected + "%N")
-			print ("%T   actual = " + d + "%N")
+			s := a_hasher.generating_type + ":  "
+			s := s + "'"
+			if a_input.count > print_threshold then
+				s := s + a_input.substring (1, print_threshold - 10)
+				s := s + " ... "
+				s := s + a_input.substring (a_input.count - 10, a_input.count)
+			else
+				s := s +  a_input
+			end
+			s := s + "'"
+			s := s + "%N"
+			print (s)
+			a_hasher.set_with_string (a_input)
+			a_hasher.show_stats
+			d := a_hasher.digest.as_string
+			print ("%Texpected = " + a_expected + "%N")
+			print (" %T actual = " + d)
+			print ("%N%N")
 			assert (s, d ~ a_expected)
 		end
 
-feature -- Usage demo and test
-
---	demo_test
---			-- Demonstrate usage of interface classes
---		local
---			sha_1: SHA_1
---			sha_512: SHA_512
---			d_1: SHA_DIGEST_1
---			d_512: SHA_DIGEST_512
---			m: STRING_8			-- The message
---			e, e2: STRING_8		-- Expected result
---		do
---				-- Example classes and two ways to use an SHA_xxx class
---			m := "abc"
---			create sha_1.set_with_string (m)
---			create sha_512
---			sha_512.set_with_string (m)
---				-- Calculate and print the SHA hash tags
---			d_1 := sha_1.digest
---			d_512 := sha_512.digest
---			print ("{SHA_TESTS}.demo_test %N")
---			print ("SHA-1 value:    " + d_1.as_string + "%N")
---			print ("SHA-512 value:  " + d_512.as_string + "%N")
---				-- Might as well test the results
---			e :=  "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
---			e2 := "ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
---					"2192992a274fc1a8 36ba3c23a3feebbd 454d4423643ce80e 2a9ac94fa54ca49f"
---			assert ("Demo_test one", d_1.as_string ~ e)
---			assert ("Demo_test e2", d_512.as_string ~ e2)
---		end
-
-feature -- Test routines (SHA-1)
+feature -- Basic opeerartions
 
 	test_sha_1
 			-- Test {SHA_1_HASHER} as per FIPS PUB 180-2 (Aug 2002)
 			-- Appendix A, pp 25-27
+		local
+			h: SHA_1_HASHER
 		do
-			hasher := sha_1_hasher
+			print_header ("SHA_1_HASHER")
+			create h
 				-- One block
-			test_name := "sha-1: single block"
-			hasher.set_with_string ("abc")
-			test ("a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d")
-				-- Multi-block (55 char => partial block with lenth in second block)
-			test_name := "sha-1: multi-block (56 chars)"
-			hasher.set_with_string ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")
-			test ("84983e44 1c3bd26e baae4aa1 f95129e5 e54670f1")
+			test (h, abc, "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d")
+				-- Multi-block (55 char => partial block with length in second block)
+			test (h, char_56, "84983e44 1c3bd26e baae4aa1 f95129e5 e54670f1")
 				-- Multi-block (62 char => one full block and length in second
-				-- Checked with website "onlinemd5.com"
-			test_name := "sha-1: multi-block (62 chars)"
-			hasher.set_with_string ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq123456")
-			test ("9d9d6d43 639baf54 bc62d95e 9804ca4c 03c82163")
+			test (h, char_62, "9d9d6d43 639baf54 bc62d95e 9804ca4c 03c82163")
 				-- Test "The red fox..."
-			test_name := "sha-1:  The red fox..."
-			hasher.set_with_string ("The red fox jumps over the blue dog")
-			test ("0fec050f 02cd6201 e2ef871e cf8f9d94 c1dab7ae")
-			test_name := "sha-1:  the red fox... (lower case t)"
-			hasher.set_with_string ("the red fox jumps over the blue dog")
-			test ("faf08572 98136eff 6c72af2f d0b6a9bf c76235a0")
-			print_line
+			test (h, sentence, "b43b7045 35995557 7698e22f 3c3cecc9 b6836923")
+				-- Test "the red fox..."  (i.e. lower case "t")
+			test (h, lower_t_sentence, "2755a0a0 b775476f fe6ddac0 b6f8aff3 51f366d6")
 				-- Long message
-			test_name := "sha-1: one million a's"
-			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-			test ("34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
+			test (h, one_million_a, "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 		end
 
---	test_sha_256
---		do
---			hasher := sha_256
---				-- One block
---			test_name := "sha-256:  single block"
---			hasher.set_with_string ("abc")
---			test ("ba7816bf 8f01cfea 414140de 5dae2223 b00361a3 96177a9c b410ff61 f20015ad")
+	test_sha_256
+			-- Test {SHA_1_HASHER} as per FIPS PUB 180-2 (Aug 2002)
+			-- Appendix A, pp 33-40
+		local
+			h: SHA_256_HASHER
+		do
+			print_header ("SHA_256_HASHER")
+			create h
+				-- One block
+			test (h, abc, "ba7816bf 8f01cfea 414140de 5dae2223 b00361a3 96177a9c b410ff61 f20015ad")
+				-- Multi-block (55 char => partial block with length in second block)
+			test (h, char_56, "248d6a61 d20638b8 e5c02693 0c3e6039 a33ce459 64ff2167 f6ecedd4 19db06c1")
+				-- Long message
+			test (h, one_million_a, "cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
+
 --				-- Multi-block
 --			test_name := "sha-256:  multiple blocks"
 --			hasher.set_with_string ("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")
 --			test ("248d6a61 d20638b8 e5c02693 0c3e6039 a33ce459 64ff2167 f6ecedd4 19db06c1")
 --				-- Long message
 --			test_name := "sha-256:  one million a's"
-----			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-----			test ("cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
+------			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
+------			test ("cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
 --			print_line
---		end
+		end
 
 --	test_sha_224
 --			-- Values compared to http://www.miniwebtool.com/sha224-hash-generator/

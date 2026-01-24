@@ -2,9 +2,6 @@ note
 	description: "[
 		A 32-bit implementation of an {SHA_PARSER}.
 
-		This class redefines feature `blocks' along with the anchor features to
-		use 32-bit classes and types.
-
 		This class implements `pad', which adds a one to `message' and rounds
 		its size off to a word boundary, and `parse', which places the message
 		bytes into blocks as words in preparation for `calculate'.
@@ -120,7 +117,6 @@ feature -- Initialization
 			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Parsing status
 			reset_status_flags
-			show_stats
 		ensure
 			not_file_parsing: not is_file_parsing
 			is_string_8_parsing: is_string_parsing
@@ -129,17 +125,21 @@ feature -- Initialization
 			not_parsed: not is_parsed
 		end
 
+feature -- Access
+
 show_stats
 		-- for testing
 	do
-		print ("byte_count = "+ byte_count.out + "%N")
-		print ("word_count = "+ word_count.out + "%N")
-		print ("block_count = "+ block_count.out + "%N")
-		print ("has_partial_block = "+ has_partial_block.out + "%N")
-		print ("has_partial_word = "+ has_partial_word.out + "%N")
+		print (" " + byte_count.out + " bytes,  " + word_count.out + " full words,  ")
+		print (block_count.out + " full blocks  -- ")
+		if has_partial_block then
+			print ("  partial block  ")
+		end
+		if has_partial_word then
+			print ("  partial word ")
+		end
+		print ("%N")
 	end
-
-feature -- Access
 
 	message: IMMUTABLE_STRING_GENERAL
 			-- The string or filename from which to build the `blocks'
