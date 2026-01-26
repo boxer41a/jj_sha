@@ -99,7 +99,7 @@ feature {NONE} -- Implementation
 			-- The last word, when the bytes remaining are not enough to fill a word
 		local
 			i: INTEGER_32
-			bc: INTEGER_64	-- count bytes read into this word
+			bc: INTEGER_32		-- count bytes read into this word
 			n8: NATURAL_64
 		do
 			from i := word_count * {SHA_BLOCK_64}.bytes_per_word
@@ -136,7 +136,7 @@ feature {NONE} -- Implementation
 			index_small_enough: a_index <= block_count
 		local
 			i: INTEGER_32
-			w: NATURAL_54
+			w: NATURAL_64
 		do
 			create Result
 			from i := 1

@@ -8,7 +8,7 @@ note
 
 		This class interfaces through an {SHA_PARSER}, which parses a
 		client's input into `blocks'.  Using these `blocks', this class produces
-		a `digest'.		
+		a `digest'.
 		]"
 	author: "Jimmy J Johnson"
 	date: "1/24/26"
@@ -16,6 +16,22 @@ note
 deferred class
 	SHA_HASHER
 
+feature -- Initialization
+
+	set_with_filename (a_string: READABLE_STRING_GENERAL)
+			-- Initialize Current and set the `message' to `a_string'
+		deferred
+		end
+
+	set_with_string (a_string: READABLE_STRING_GENERAL)
+			-- Initialize Current and set the `message' to `a_string'
+		deferred
+		end
+
+	show_stats
+		deferred
+		end
+		
 feature -- Access
 
 	frozen digest: attached like digest_imp

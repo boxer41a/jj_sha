@@ -31,15 +31,15 @@ feature -- Initialize
 
 feature -- Access
 
-	word_0: NATURAL_32
+	word_0: NATURAL_64
 			-- The zero-th working variable (i.e. first word).
-	word_1: NATURAL_32
-	word_2: NATURAL_32
-	word_3: NATURAL_32
-	word_4: NATURAL_32
-	word_5: NATURAL_32
-	word_6: NATURAL_32
-	word_7: NATURAL_32
+	word_1: NATURAL_64
+	word_2: NATURAL_64
+	word_3: NATURAL_64
+	word_4: NATURAL_64
+	word_5: NATURAL_64
+	word_6: NATURAL_64
+	word_7: NATURAL_64
 			-- The 8th working variable; the 8th word of the calculation
 
 feature -- Element change
@@ -66,7 +66,7 @@ feature -- Element change
 			word_7_is_zero: word_7 = 0
 		end
 
-	set_five (w0, w1, w2, w3, w4: NATURAL_32)
+	set_five (w0, w1, w2, w3, w4: NATURAL_64)
 			-- Assign correspoding values to the first five words (for SHA-1).
 		do
 			word_0 := w0
@@ -76,7 +76,7 @@ feature -- Element change
 			word_4 := w4
 		end
 
-	set_all (w0, w1, w2, w3, w4, w5, w6, w7: NATURAL_32)
+	set_all (w0, w1, w2, w3, w4, w5, w6, w7: NATURAL_64)
 			-- Assign correspoding values to all eight words.
 		do
 			word_0 := w0

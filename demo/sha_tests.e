@@ -65,7 +65,7 @@ feature {NONE} -- Implementation
 
 feature {NONE} -- Basic operations
 
-	test (a_hasher: SHA_HASHER_32; a_input, a_expected: STRING_8)
+	test (a_hasher: SHA_HASHER; a_input, a_expected: STRING_8)
 			-- Test if the `hasher' produces `a_expected' digest
 		local
 			s: STRING_8
@@ -152,16 +152,24 @@ feature -- Basic opeerartions
 --			print_line
 --		end
 
---	test_sha_512
---		do
---				-- One block
---			hasher := sha_512
---				-- One block
---			test_name := "sha-512:  single block"
+	test_sha_512
+		local
+			h: SHA_512_HASHER
+			d: STRING_8
+		do
+			print_header ("SHA_512_HASHER")
+			create h
+				-- One block
+			d := "ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
+					"2192992a274fc1a8 36ba3c23a3feebbd 454d4423643ce80e 2a9ac94fa54ca49f"
+			test (h, abc,  d)
+
+
+
 --			hasher.set_with_string ("abc")
 --			test ("ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
 --					"2192992a274fc1a8 36ba3c23a3feebbd 454d4423643ce80e 2a9ac94fa54ca49f")
---				-- Multi-block
+				-- Multi-block
 --			test_name := "sha-512:  multiple blocks"
 --			hasher.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
 --					"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
@@ -172,8 +180,8 @@ feature -- Basic opeerartions
 ------			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
 ------			test ("e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
 ------					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b")
---			print_line
---		end
+
+		end
 
 ----	test_sha_384
 ----			-- FIPS Pub 108-2 (Aug 2002)
