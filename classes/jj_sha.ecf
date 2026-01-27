@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-21-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-21-0 http://www.eiffel.com/developers/xml/configuration-1-21-0.xsd" name="jj_sha" uuid="3B588E9D-F54C-4D49-8CEF-495236B1C44E" library_target="jj_sha">
+	<target name="jj_sha">
+		<root all_classes="true"/>
+		<file_rule>
+			<exclude>/CVS$</exclude>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/\.git$</exclude>
+			<exclude>/\.svn$</exclude>
+		</file_rule>
+		<option warning="warning" manifest_array_type="mismatch_warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<setting name="total_order_on_reals" value="false"/>
+		<setting name="dead_code_removal" value="feature"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<cluster name="classes" location=".\" recursive="false">
+			<cluster name="interface" location=".\interface\" recursive="true"/>
+			<cluster name="support" location=".\support\" recursive="true"/>
+
+<!-- Subclusters for Diagram Tool - did not look go...so no.
+			<cluster name="interface" location=".\interface\" recursive="false">
+				<cluster name="interface_32-bit" location=".\interface\32-bit\" recursive="false">
+				</cluster>
+				<cluster name="interface_64-bit" location=".\interface\64-bit\" recursive="false">
+				</cluster>
+			</cluster>
+			<cluster name="support" location=".\support\" recursive="false">
+				<cluster name="suppor_base" location=".\support\base\" recursive="false">
+				</cluster>
+				<cluster name="suppor_32-bit" location=".\support\32-bit\" recursive="false">
+				</cluster>
+				<cluster name="support_64-bit" location=".\support\64-bit\" recursive="false">
+				</cluster>
+			</cluster>
+-->		</cluster>
+	</target>
+	<target name="jj_sha_tests" extends="jj_sha">
+		<root class="APPLICATION" feature="make"/>
+		<option warning="warning">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<setting name="console_application" value="true"/>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing.ecf"/>
+		<cluster name="test" location=".\testing\" recursive="true"/>
+	</target>
+</system>
+

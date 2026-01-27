@@ -92,7 +92,7 @@ feature -- Initialization
 				-- Write the string to a temp file
 			fn := "temp_file.raw"
 			create f.make_open_write (fn)
-				--
+				-- Read characters into the file
 			if attached {READABLE_STRING_8} a_string as s8 then
 				from i := 1
 				until i > s8.count
@@ -118,6 +118,7 @@ feature -- Initialization
 			create f.make_open_read (fn)
 			create buffer.make (f.count)
 			f.read_to_managed_pointer (buffer, 0, f.count)
+			f.delete
 				-- Parsing status
 			reset_status_flags
 		ensure

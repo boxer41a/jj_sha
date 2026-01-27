@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-22-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-22-0 http://www.eiffel.com/developers/xml/configuration-1-22-0.xsd" name="jj_sha_with_jj_naturals_demo" uuid="35F5E5A7-A4DA-4F7E-A294-F098B20BA31A">
-	<target name="jj_sha_with_jj_naturals_demo">
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-22-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-22-0 http://www.eiffel.com/developers/xml/configuration-1-22-0.xsd" name="sha_with_generics_demo" uuid="35F5E5A7-A4DA-4F7E-A294-F098B20BA31A">
+	<target name="sha_with_generics_demo">
 		<root class="SHA_DEMO" feature="make"/>
 		<option profile="false" warning="warning" is_obsolete_iteration="true" is_obsolete_routine_type="true" syntax="standard" manifest_array_type="mismatch_warning">
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
@@ -28,11 +28,11 @@
 		<cluster name="with_jj_naturals" location="..\">
 			<option is_obsolete_iteration="true">
 			</option>
-			<cluster name="interface" location="..\with_jj_naturals\interface\" recursive="true">
+			<cluster name="interface" location="..\interface\" recursive="false">
 				<option is_obsolete_iteration="true">
 				</option>
 			</cluster>
-			<cluster name="support" location="..\with_jj_naturals\support\" recursive="true">
+			<cluster name="support" location="..\support\" recursive="true">
 				<option is_obsolete_iteration="true">
 				</option>
 			</cluster>

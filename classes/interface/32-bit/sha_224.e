@@ -7,11 +7,11 @@ note
 
 
 class
-	SHA_224_HASHER
-	
+	SHA_224
+
 inherit
 
-	SHA_256_HASHER
+	SHA_256
 		redefine
 			digest_imp
 		end

@@ -6,7 +6,7 @@ note
 	date: "1/23/26"
 
 class
-	SHA_256_HASHER
+	SHA_256
 
 inherit
 

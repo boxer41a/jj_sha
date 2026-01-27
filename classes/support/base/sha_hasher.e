@@ -23,22 +23,6 @@ inherit
 			reset_status_flags
 		end
 
-feature -- Initialization
-
---	set_with_filename (a_string: READABLE_STRING_GENERAL)
---			-- Initialize Current and set the `message' to `a_string'
---		deferred
---		end
-
---	set_with_string (a_string: READABLE_STRING_GENERAL)
---			-- Initialize Current and set the `message' to `a_string'
---		deferred
---		end
-
---	show_stats
---		deferred
---		end
-
 feature -- Access
 
 	frozen digest: attached like digest_imp
@@ -56,12 +40,6 @@ feature -- Access
 
 feature -- Status report
 
---	is_parsed: BOOLEAN
---			-- Has the input been parsed?
---			-- Will get this from an {SHA_PARSER}
---		deferred
---		end
-
 	is_calculated: BOOLEAN
 			-- Has the `digest' been calculated?
 
@@ -75,12 +53,6 @@ feature -- Status setting
 		end
 
 feature {NONE} -- Basic operations
-
---	parse
---			-- Parse the input
---			-- Depends on an {SHA_PARSER}
---		deferred
---		end
 
 	frozen calculate
 			-- Calculate and make result available in the `digest'.

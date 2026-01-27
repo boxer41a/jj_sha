@@ -9,7 +9,7 @@ note
 	revision: "$Revision$"
 
 class
-	SHA_1_HASHER
+	SHA_1
 
 inherit
 

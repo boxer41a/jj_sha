@@ -75,7 +75,7 @@ feature {NONE} -- Implementation
 
 feature {NONE} -- Basic operations
 
-	test (a_hasher: SHA_HASHER; a_input, a_expected: STRING_8)
+	test (a_hasher: SHA [JJ_NATURAL]; a_input, a_expected: STRING_8)
 			-- Test if the `hasher' produces `a_expected' digest
 		local
 			s: STRING_8
@@ -95,7 +95,7 @@ feature {NONE} -- Basic operations
 			print (s)
 			a_hasher.set_with_string (a_input)
 			d := a_hasher.digest.as_string
-			a_hasher.show_stats
+--			a_hasher.show_stats
 			print ("%Texpected = " + a_expected + "%N")
 			print (" %T actual = " + d)
 			print ("%N%N")

@@ -56,7 +56,7 @@ note
 		The interface cluster contains the classes with	which the programmer
 		interacts; the support cluster contains the classes that perform the
 		actual calculatios.  Each SHA_xxx class produces SHA_DIGEST_xxx, 
-		covariantly redefined to follow the type of the SHA_xxx hasher.
+		covariantly redefined to follow the type of the SHA_xxx parser.
 			
 		interface classes:
 		
@@ -94,47 +94,52 @@ note
 				
 		support classes:
 		
-			{SHA_PARSER}
-				Common ancestor to the 32-bit and 64-bit parser classes.
-				Declares the user interface features for input and establishes
-				the order of operations for converting an input (string or
-				file) into blocks.
+			{SHA_32} [G -> {JJ_NATURAL}]}
+				Common ancestor and top of the hierarchy for the various
+				SHA classes.  Declares the features for input to and 
+				output from the algorithms and converts the input (file
+				or string) into a {SHA_MESSAGE}.
+				
+			{SHA_MESSAGE} [G -> {JJ_NATURAL}]
+				The byte sequence (i.e. an ARRAY [NATURAL_8]), representing
+				the message (as defined by FIPS Pub 180-4 (Mar 2012) to 
+				calculate SHA digests for 32- or 64-bit hashes.
 
-			{SHA_HASHER}
-				Common ancestor to the 32-bit and 64-bit hasher classes.
-				Declares the root features needed to calculate the `digest',
-				the desired output of an SHA hasher.
+			{SHA_PARSER_32} [G -> {JJ_NATURAL}]
+				-- Descendent of {SHA_32} and base class for the parser 
+				-- classes.  It preprocess and pads an {SHA_MESSAGE} before
+				-- calculation of a digest. 
 				
-			{SHA_PARSER_32}
-				-- Descendent of {SHA_PARSER} which completes the definitions
-				-- of features to convert the input into 32-bit blocks.
+			{SHA_FUNCTIONS_COMMON} [G -> {JJ_NATURAL}]
+				-- This class extends the {SHA_PARSER_32} class, adding
+				-- functions that are common to all the SHA algorithms.
 				
-			{SHA_PARSER_64}
-				-- Descendent of {SHA_PARSER} which completes the definitions
-				-- of features to convert the input into 64-bit blocks.
-								
-			{SHA_HASHER_32}
-				-- Descendent of {SHA_PARSER_32} and {SHA_HASHER}.
-				-- Defines many of the 32-bit features for calculting the `digest'.
+			{SHA_PARSER_32_BIT} and {SHA_PARSER_64_BIT}
+				-- Descendent of {SHA_PARSER_32} but with a concrete type
+				-- for the generic (either NATURAL_32 or NATURAL_64),
+				-- providing an anchor for features previously defined
+				-- using the {JJ_NATURAL} type.
 				
-			{SHA_HASHER_64}
-				-- Descendent of {SHA_PARSER_64} and {SHA_HASHER}.
-				-- Defines many of the 64-bit features for calculting the `digest'.
+			{SHA_1_FUNCTIONS}	
+				-- Descendent of {SHA_FUNCTIONS_COMMON} and {SHA_PARSER_32_BIT},
+				-- containing functions specific to the {SHA_1} algorithm.
+				-- Direct ancestor to the {SHA_1} interface class.
 				
-			{SHA_1}	
-				-- Interface class for producing an SHA-1 hash message digest.
-				-- Defines functions specific for this 32-bit SHA implementation.
-				-- No longer considered secure; use another hasher.
-				
-			{SHA_256}
-				-- Another 32-bit SHA hasher.
-					
-			{SHA_512} 
-				-- 64-bit SHA hashers.
+			{SHA_FUNCTIONS_256} 
+				-- Descendent of {SHA_FUNCTIONS_COMMON} and {SHA_PARSER_32_BIT},
+				-- containing functions specific to the {SHA_256} algorithm.
+				-- Direct ancestor to the {SHA_256} interface class.
+
+			{SHA_FUNCTIONS_512}
+				-- Descendent of {SHA_FUNCTIONS_COMMON} and {SHA_PARSER_64_BIT},
+				-- containing functions specific to the {SHA_512} algorithm.
+				-- Direct ancestor to the {SHA_512} interface class.
 
 	]"
+
 	author: "Jimmy J. Johnson"
-	date: "1/27/26"
+	date: "$Date$"
+	revision: "$Revision$"
 
 class
 	SHA_DEMO
