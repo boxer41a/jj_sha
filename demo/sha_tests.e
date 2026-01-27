@@ -15,14 +15,16 @@ inherit
 feature {NONE}-- Initialization
 
 	abc: STRING_8
-			-- The string "abc"
+			-- The string "abc".  A "One-Block Message" for SHA-1 and other Examples
+			-- A 24-bit ASCII string "abc".
+			-- See FIPS PUB 1802 (Aug 2002), page 25, page 33, 41
 		once
 			Result := "abc"
 		end
 
 	char_56: STRING_8
-			-- A string with 56 characters
-			-- A partial block, but with add second block for length vector
+			-- An 4480-bit ASCII string used as the Example (Multi-Block Message)
+			-- See FIPS PUB 1802 (Aug 2002), page 27, page 35
 		once
 			Result := "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"
 		end
@@ -32,6 +34,14 @@ feature {NONE}-- Initialization
 			-- Results in one full block and a partial block.
 		once
 			Result := "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq123456"
+		end
+
+	bits_896: STRING_8
+			-- An 896 bit ASCII string used as the SHA-512 Example (Multi-Block Message)
+			-- See FIPS PUB 1802 (Aug 2002), page 27, page 35
+		once
+			Result := "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
+						"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"
 		end
 
 	sentence: STRING_8
@@ -84,8 +94,8 @@ feature {NONE} -- Basic operations
 			s := s + "%N"
 			print (s)
 			a_hasher.set_with_string (a_input)
-			a_hasher.show_stats
 			d := a_hasher.digest.as_string
+			a_hasher.show_stats
 			print ("%Texpected = " + a_expected + "%N")
 			print (" %T actual = " + d)
 			print ("%N%N")
@@ -128,29 +138,37 @@ feature -- Basic opeerartions
 			test (h, abc, "ba7816bf 8f01cfea 414140de 5dae2223 b00361a3 96177a9c b410ff61 f20015ad")
 				-- Multi-block (55 char => partial block with length in second block)
 			test (h, char_56, "248d6a61 d20638b8 e5c02693 0c3e6039 a33ce459 64ff2167 f6ecedd4 19db06c1")
+
+			test (h, sentence, "ad28712b 05c70a95 513de7ea 49a227c3 03c764db 335e58d2 3bde5e41 e914f764")
+
+--				-- Another multi-block
+--			test (h, bits_896, "cf5b16a7 78af8380 036ce59e 7b049237 0b249b11 e8f07a51 afac4503 7afee9d1")
+
 				-- Long message
---			test (h, one_million_a, "cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
+			test (h, one_million_a, "cdc76e5c 9914fb92 81a1c7e2 84d73e67 f1809a48 a497200e 046d39cc c7112cd0")
 		end
 
---	test_sha_224
---			-- Values compared to http://www.miniwebtool.com/sha224-hash-generator/
---		do
---			hasher := sha_224
---				-- One block
---			test_name := "sha-224:  single block"
---			hasher.set_with_string ("abc")
---			test ("23097d22 3405d822 8642a477 bda255b3 2aadbce4 bda0b3f7 e36c9da7")
+	test_sha_224
+			-- Values compared to http://www.miniwebtool.com/sha224-hash-generator/
+		local
+			h: SHA_224_HASHER
+		do
+			print_header ("SHA_224_HASHER")
+			create h
+				-- One block
+			test (h, abc, "23097d22 3405d822 8642a477 bda255b3 2aadbce4 bda0b3f7 e36c9da7")
+			test (h, sentence, "e430948d 13c26050 d5d928d2 05da4052 f83ed065 5b024d60 21449b35")
+
 --				-- Multi-block
+--			test (h, bits_896, "c97ca9a5 59850ce9 7a04a96d ef6d99a9 e0e0e2ab 14e6b8df 265fc0b3")
+
 --			test_name := "sha-224:  multiple blocks"
 --			hasher.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
 --									"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
 --			test ("c97ca9a5 59850ce9 7a04a96d ef6d99a9 e0e0e2ab 14e6b8df 265fc0b3")
---				-- Long message
---			test_name := "sha-224:  one million a's"
-----			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-----			test ("20794655 980c91d8 bbb4c1ea 97618a4b f03f4258 1948b2ee 4ee7ad67")
---			print_line
---		end
+				-- Long message
+			test (h, one_million_a, "20794655 980c91d8 bbb4c1ea 97618a4b f03f4258 1948b2ee 4ee7ad67")
+		end
 
 	test_sha_512
 		local
@@ -163,24 +181,14 @@ feature -- Basic opeerartions
 			d := "ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
 					"2192992a274fc1a8 36ba3c23a3feebbd 454d4423643ce80e 2a9ac94fa54ca49f"
 			test (h, abc,  d)
-
-
-
---			hasher.set_with_string ("abc")
---			test ("ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
---					"2192992a274fc1a8 36ba3c23a3feebbd 454d4423643ce80e 2a9ac94fa54ca49f")
 				-- Multi-block
---			test_name := "sha-512:  multiple blocks"
---			hasher.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
---					"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
---			test ("8e959b75dae313da 8cf4f72814fc143f 8f7779c6eb9f7fa1 7299aeadb6889018 " +
---					"501d289e4900f7e4 331b99dec4b5433a c7d329eeb6dd2654 5e96e55b874be909")
+			d := "8e959b75dae313da 8cf4f72814fc143f 8f7779c6eb9f7fa1 7299aeadb6889018 " +
+					"501d289e4900f7e4 331b99dec4b5433a c7d329eeb6dd2654 5e96e55b874be909"
+			test (h, bits_896, d)
 --				-- Long message
---			test_name := "sha-512:  one million a's"
-------			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-------			test ("e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
-------					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b")
-
+			d := "e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
+					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b"
+			test (h, one_million_a, d)
 		end
 
 ----	test_sha_384

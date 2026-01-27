@@ -170,9 +170,8 @@ feature {NONE} -- Initialization
 
 			t.test_sha_1
 			t.test_sha_256
+			t.test_sha_224
 			t.test_sha_512
---			t.test_sha_224
---			t.test_sha_512
 ----			t.test_sha_384
 
 --			t.hash_text_file

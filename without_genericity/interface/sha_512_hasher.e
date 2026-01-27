@@ -1,7 +1,7 @@
 note
 	description: "[
 		Functions and interface specific to SHA-256 calculations
-	]"
+		]"
 	author: "Jimmy J Johnson"
 	date: "1/26/26"
 
@@ -13,6 +13,15 @@ inherit
 	SHA_HASHER_64
 
 feature {NONE} -- Basic operations
+
+	show_variables (t: INTEGER_32; a, b, c, d, e, f, g, h: NATURAL_64)
+			-- Test routine to show intermediate calcuated values in the same format
+			-- as FIPS PUB 180-2 (Aug 2002), page 42-
+		do
+			print ("t = " + t.out + " :  ")
+			print (a.to_hex_string + "  " + b.to_hex_string + "  " + c.to_hex_string + "  " + d.to_hex_string + "%N")
+			print ("%T" + e.to_hex_string + " " + f.to_hex_string + " " + g.to_hex_string + " " + h.to_hex_string + "%N")
+		end
 
 	calculate_imp
 			-- Calculate and make result available in the `digest'
@@ -54,13 +63,6 @@ feature {NONE} -- Basic operations
 						c := b
 						b := a
 						a := big_t_one + big_t_two
-
---						io.put_string ("t = " + t.out + "%T" + a.to_hex_string)
---						io.put_string ("%T" + b.to_hex_string)
---						io.put_string ("%T" + c.to_hex_string)
---						io.put_string ("%T" + d.to_hex_string)
---						io.put_string ("%T" + e.to_hex_string)
---						io.new_line
 						t := t + 1
 					end
 							-- Step 4:  Compute the i-th intermedate hash value H(i)

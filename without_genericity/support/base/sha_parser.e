@@ -9,7 +9,7 @@ note
 		into a 32-bit or 64-bit implementation of a `blocks' array as described in:
 		
 			FIPS Pub 108-4 (Mar 2012).
-		
+
 		]"
 	author: "Jimmy J Johnson"
 	date: "1/24/26"
@@ -261,7 +261,7 @@ feature -- Basic operations
 			-- for testing
 		do
 			print (" " + byte_count.out + " bytes,  " + word_count.out + " full words,  ")
-			print (block_count.out + " full blocks  -- ")
+			print (block_count.out + " full blocks  " + blocks.count.out + " total blocks -- ")
 			if has_partial_block then
 				print ("  partial block  ")
 			end

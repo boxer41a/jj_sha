@@ -45,24 +45,24 @@ feature {NONE} -- Basic operations
 
 	rotate_left (x: NATURAL_64; n: INTEGER): NATURAL_64
 			-- Circular left shift of 'x' by `n'
-			-- (x << n) v (x >> w-n) where w = 32
-			-- FIBS Pub 180-4 (Mar 2012) pages 8-9
-		require
-			n_big_enough: n >= 0
-			n_small_enough: n < 32
-		do
-			Result := x.bit_shift_left (n) | x.bit_shift_right (32 - n)
-		end
-
-	rotate_right (x: NATURAL_64; n: INTEGER): NATURAL_64
-			-- Circular right shift of 'x' by `n'
-			-- (x >> n) v (x << w-n) where w = `32'
+			-- (x << n) v (x >> w-n) where w = 64
 			-- FIBS Pub 180-4 (Mar 2012) pages 8-9
 		require
 			n_big_enough: n >= 0
 			n_small_enough: n < 64
 		do
-			Result := x.bit_shift_right (n) | x.bit_shift_left (32 - n)
+			Result := x.bit_shift_left (n) | x.bit_shift_right (64 - n)
+		end
+
+	rotate_right (x: NATURAL_64; n: INTEGER): NATURAL_64
+			-- Circular right shift of 'x' by `n'
+			-- (x >> n) v (x << w-n) where w = 64
+			-- FIBS Pub 180-4 (Mar 2012) pages 8-9
+		require
+			n_big_enough: n >= 0
+			n_small_enough: n < 64
+		do
+			Result := x.bit_shift_right (n) | x.bit_shift_left (64 - n)
 		end
 
 	right_shift (x: NATURAL_64; n: INTEGER): NATURAL_64
