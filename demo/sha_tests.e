@@ -97,7 +97,7 @@ feature {NONE} -- Basic operations
 			d := a_hasher.digest.as_string
 			a_hasher.show_stats
 			print ("%Texpected = " + a_expected + "%N")
-			print (" %T actual = " + d)
+			print (" %T  actual = " + d)
 			print ("%N%N")
 			assert (s, d ~ a_expected)
 		end
@@ -110,7 +110,7 @@ feature -- Basic opeerartions
 		local
 			h: SHA_1
 		do
-			print_header ("SHA_1_HASHER")
+			print_header ("SHA_1")
 			create h
 				-- One block
 			test (h, abc, "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d")
@@ -132,7 +132,7 @@ feature -- Basic opeerartions
 		local
 			h: SHA_256
 		do
-			print_header ("SHA_256_HASHER")
+			print_header ("SHA_256")
 			create h
 				-- One block
 			test (h, abc, "ba7816bf 8f01cfea 414140de 5dae2223 b00361a3 96177a9c b410ff61 f20015ad")
@@ -153,19 +153,13 @@ feature -- Basic opeerartions
 		local
 			h: SHA_224
 		do
-			print_header ("SHA_224_HASHER")
+			print_header ("SHA_224")
 			create h
 				-- One block
 			test (h, abc, "23097d22 3405d822 8642a477 bda255b3 2aadbce4 bda0b3f7 e36c9da7")
 			test (h, sentence, "e430948d 13c26050 d5d928d2 05da4052 f83ed065 5b024d60 21449b35")
-
---				-- Multi-block
+				-- Multi-block
 --			test (h, bits_896, "c97ca9a5 59850ce9 7a04a96d ef6d99a9 e0e0e2ab 14e6b8df 265fc0b3")
-
---			test_name := "sha-224:  multiple blocks"
---			hasher.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
---									"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
---			test ("c97ca9a5 59850ce9 7a04a96d ef6d99a9 e0e0e2ab 14e6b8df 265fc0b3")
 				-- Long message
 			test (h, one_million_a, "20794655 980c91d8 bbb4c1ea 97618a4b f03f4258 1948b2ee 4ee7ad67")
 		end
@@ -175,7 +169,7 @@ feature -- Basic opeerartions
 			h: SHA_512
 			d: STRING_8
 		do
-			print_header ("SHA_512_HASHER")
+			print_header ("SHA_512")
 			create h
 				-- One block
 			d := "ddaf35a193617aba cc417349ae204131 12e6fa4e89a97ea2 0a9eeee64b55d39a " +
@@ -185,86 +179,100 @@ feature -- Basic opeerartions
 			d := "8e959b75dae313da 8cf4f72814fc143f 8f7779c6eb9f7fa1 7299aeadb6889018 " +
 					"501d289e4900f7e4 331b99dec4b5433a c7d329eeb6dd2654 5e96e55b874be909"
 			test (h, bits_896, d)
---				-- Long message
+				-- Long message
 			d := "e718483d0ce76964 4e2e42c7bc15b463 8e1f98b13b204428 5632a803afa973eb " +
 					"de0ff244877ea60a 4cb0432ce577c31b eb009c5c2c49aa2e 4eadb217ad8cc09b"
 			test (h, one_million_a, d)
 		end
 
-----	test_sha_384
-----			-- FIPS Pub 108-2 (Aug 2002)
-----		do
-----				-- One block
-----			hasher := sha_384
-----				-- One block, pages 56-60
-----			test_name := "sha-384:  single block"
-----			hasher.set_with_string ("abc")
-----			test ("cb00753f45a35e8b b5a03d699ac65007 272c32ab0eded163 1a8b605a43ff5bed " +
-----					"8086072ba1e7cc23 58baeca134c825a7")
-----				-- Multi-block, pages 61-70
-----			test_name := "sha-384:  multiple blocks"
-----			hasher.set_with_string ("abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmn" +
-----									"hijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu")
-----			test ("09330c33f71147e8 3d192fc782cd1b47 53111b173b3b05d2 2fa08086e3b0f712 " +
-----					"fcc7c71a557e2db9 66c3e9fa91746039")
-----				-- Long message, page 70
-----			test_name := "sha-384:  one million a's"
-----			hasher.set_with_string (create {STRING_8}.make_filled ('a', 1_000_000))
-----			test ("9d0e1809716474cb 086e834e310a4a1c ed149e9c00f24852 7972cec5704c2a5b " +
-----					"07b8b3dc38ecc4eb ae97ddd87f3d8985")
-----			print_line
-----		end
+	test_sha_384
+			-- FIPS Pub 108-2 (Aug 2002)
+		local
+			h: SHA_384
+			d: STRING_8
+		do
+			print_header ("SHA_384")
+			create h
+				-- One block, pages 56-60
+			d := "cb00753f45a35e8b b5a03d699ac65007 272c32ab0eded163 1a8b605a43ff5bed " +
+						"8086072ba1e7cc23 58baeca134c825a7"
+			test (h, abc, d)
+				-- Multi-block, pages 61-70
+			d := "09330c33f71147e8 3d192fc782cd1b47 53111b173b3b05d2 2fa08086e3b0f712 " +
+						"fcc7c71a557e2db9 66c3e9fa91746039"
+			test (h, bits_896, d)
+				-- Long message, page 70
+			d := "9d0e1809716474cb 086e834e310a4a1c ed149e9c00f24852 7972cec5704c2a5b " +
+						"07b8b3dc38ecc4eb ae97ddd87f3d8985"
+			test (h, one_million_a, d)
+		end
 
---feature -- Test routines (hash a file)
+	test_sha_512_224
+			-- FIPS Pub 108-2 (Aug 2002)
+			-- https://codebeautify.org/sha512-256-hash-generator
+		local
+			h: SHA_512_224
+			d: STRING_8
+		do
+			print_header ("SHA_512_224")
+			create h
+				-- One block, pages 56-60
+			d := "4634270f707b6a54 daae7530460842e2 0e37ed265ceee9a4 3e8924aa"
+			test (h, abc, d)
+				-- Multi-block, pages 61-70
+			d := "23fec5bb94d60b23 308192640b0c4533 35d664734fe40e72 68674af9"
+			test (h, bits_896, d)
+--				-- Long message, page 70
+--			d := " "
+--			test (h, one_million_a, d)
+		end
 
---	hash_text_file
---			-- Test {SHA_1} on a text file that contains the string "abc".
---		local
---			fn: STRING_8
---			f: PLAIN_TEXT_FILE
---			sha: SHA_1
---			e: STRING_8
---			d: STRING_8
---		do
---			fn := "abc.txt"
---			create sha
---			create f.make_create_read_write (fn)
---			f.put_string ("abc")
---			f.close
---			sha.set_with_filename (fn)
---			d := sha.digest.as_string
---			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
---			print ("{SHA_TESTS}.hash_text_file: %N")
---			print ("%T message = " + sha.out + "%N")
---			print ("%T expected = " + e + "%N")
---			print ("%T computed = " + d + "%N")
---			assert (sha.out, d ~ e)
---		end
+	test_sha_512_256
+			-- FIPS Pub 108-2 (Aug 2002)
+			-- https://codebeautify.org/sha512-256-hash-generator
+		local
+			h: SHA_512_256
+			d: STRING_8
+		do
+			print_header ("SHA_512_224")
+			create h
+				-- One block, pages 56-60
+			d := "53048e2681941ef9 9b2e29b76b4c7dab e4c2d0c634fc6d46 e0e2f13107e7af23"
+			test (h, abc, d)
+				-- Multi-block, pages 61-70
+			d := "3928e184fb8690f8 40da3988121d31be 65cb9d3ef83ee614 6feac861e19b563a"
+			test (h, bits_896, d)
+--				-- Long message, page 70
+--			d := " "
+--			test (h, one_million_a, d)
+		end
 
---	hash_raw_file
---			-- Test {SHA_1} on a binary file that contains "abc" and a natural number.
---		local
---			f: RAW_FILE
---			sha: SHA_1
---			e: STRING_8
---			d: STRING_8
---			fn: STRING_8
---		do
---				-- Create the file
---			fn := "abc.raw"
---			create f.make_create_read_write (fn)
---			f.put_string ("abc")
---			f.put_natural_32 (0xFFF0AB80)
---			f.close
---			create sha.set_with_filename (fn)
---			d := sha.digest.as_string
---			e := "a42047ef 4571beb0 8e8810ed 65ef39b7 6a6587b9"
---			print ("{SHA_TESTS}.hash_raw_file: %N")
---			print ("%T message = " + sha.out + "%N")
---			print ("%T expected = " + e + "%N")
---			print ("%T computed = " + d + "%N")
---			assert (sha.out, d ~ e)
---		end
+
+feature -- Test routines (hash a file)
+
+	hash_text_file
+			-- Test {SHA_1} on a text file that contains the string "abc".
+		local
+			fn: STRING_8
+			f: PLAIN_TEXT_FILE
+			h: SHA_1
+			e: STRING_8
+			d: STRING_8
+		do
+			print_header ("SHA_1.make_with_file_name")
+				-- Create a plain text file
+			fn := "abc.txt"
+			create f.make_create_read_write (fn)
+			f.put_string ("abc")
+			f.close
+			create h.make_with_filename (fn)
+			d := h.digest.as_string
+			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
+			f.delete
+			print ("%T expected = " + e + "%N")
+			print ("%T computed = " + d + "%N")
+			assert ("SHA_1.digest", d ~ e)
+		end
 
 --	hash_large_file
 --		-- Test {SHA-256} from NOOBS file (Raspberry Pi operating system).20015ad")

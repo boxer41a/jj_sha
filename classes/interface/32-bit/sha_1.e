@@ -15,6 +15,11 @@ inherit
 
 	SHA_HASHER_32
 
+create
+	default_create,
+	make_with_filename,
+	make_with_string
+
 feature {NONE} -- Basic operations
 
 	show_hex (t: INTEGER_32; a, b, c, d, e: NATURAL_32)

@@ -24,12 +24,12 @@ note
 		corresponding to the desired encryption (i.e. SHA-1, SHA-256, etc.),
 		set the string or file message to be hashed, and then query the
 		parser for the digest.
-		
+
 		local
 			parser: SHA_1
 			d, d2: SHA_DIGEST_1
 		do
-			create parser	
+			create parser
 			parser.set_with_string ("The red fox jumps over the blue dog")
 			d := parser.digest
 			parser.set_with_string ("the red fox jumps over the blue dog")
@@ -42,12 +42,12 @@ note
 				io.put_string ("digest 2 = " + d2.as_hex_string + "%N")
 			end
 		do
-		
+
 		The output of the above code is:
 			The two input strings were NOT the same.
 			digest 1 = 0fec050f 02cd6201 e2ef871e cf8f9d94 c1dab7ae
 			digest 2 = faf08572 98136eff 6c72af2f d0b6a9bf c76235a0
-		
+
 		Note that a small change, the first letter of the input changed
 		to lower case, produced a large change in the computed digest.
 		]"
@@ -163,14 +163,16 @@ feature {NONE} -- Initialization
 			end
 			print ("Begin SHA_DEMO %N")
 			io.new_line
-
+				-- Call test routines
 			t.test_sha_1
 			t.test_sha_256
 			t.test_sha_224
 			t.test_sha_512
-----			t.test_sha_384
+			t.test_sha_384
+			t.test_sha_512_224
+			t.test_sha_512_256
 
---			t.hash_text_file
+			t.hash_text_file
 --			t.hash_raw_file
 --			t.hash_large_file
 

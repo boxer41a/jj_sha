@@ -64,6 +64,7 @@ feature -- Initialization
 		do
 			default_create
 			create f.make_open_read (a_string)
+			create buffer.make (f.count)
 			f.read_to_managed_pointer (buffer, 0, f.count)
 				-- Need an {IMMUTABLE_STRING_8}
 			string_message_imp := Void
