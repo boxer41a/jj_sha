@@ -56,6 +56,17 @@ Note that a small change, the first letter of the input changed to lower case, p
 ###Demo
 The demo program [SHA_DEMO](./demo/sha_demo.e) uses [SHA_TESTS](./demo/sha_tests.e), to display feature calls and the results of the calls.  It also verifies the output digests against values given in the FIPS PUB or from other hasher programs.  When the demo system is open in [EiffelStudio](www.eiffel.com), you can also execute some features in [AutoTest](https://www.eiffel.org/doc/eiffelstudio/AutoTest).
 
+###Utility
+A [GUI Utility](./demo_gui) that demonstrates the cluster and serves as a useful tool for checking know hash against a hash generated from a string or a file can be build using [sha\_gui\_utility.ecf](./demo_gui/sha_gui_utility.ecf).  A MacOS executable is included in the [Executables](./Executables) directory.
+
+<img 
+	src="./docs/SHA Utility.png"
+	title="Screen shot of SHA Utility"
+	width="70%"
+	alt="Class Diagram"
+	border="2px solid"
+/>
+
 
 #Experimental Cluster
 Though not required but useful as an academic exercise and historical record, this repository also includes an implementation of the SHA library that demonstrates the use of the [JJ_NATURAL classes](http://github.com/boxer41a/jj_naturals) as an override cluster.  It was a first attempt at the SHA library and also showed how a common ancestor to the NATURAL\_xxx classes could be incorporated into the base library hierarchy.  Using the JJ\_NATURAL cluster reduced the number of classes and eliminated code duplication.  Notice the use of the generic parameter, JJ\_NATURAL, in the class diagram.

@@ -12,6 +12,19 @@ inherit
 
 	SHA_HASHER_32
 
+create
+	default_create,
+	make_with_filename,
+	make_with_string
+
+feature -- Access
+
+	name: STRING_8
+			-- Displayable name of this hasher
+		do
+			Result := "SHA-256"
+		end
+
 feature {NONE} -- Basic operations
 
 	calculate_imp

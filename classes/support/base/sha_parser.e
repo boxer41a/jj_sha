@@ -91,7 +91,7 @@ feature -- Initialization
 			file_message_imp := Void
 			create string_message_imp.make_from_string (a_string)
 				-- Write the string to a temp file
-			fn := "temp_file.raw"
+			fn := generating_type.name + "_temp_file.raw"
 			create f.make_open_write (fn)
 				-- Read characters into the file
 			if attached {READABLE_STRING_8} a_string as s8 then
@@ -118,7 +118,9 @@ feature -- Initialization
 				-- Read the temp file into the `file_pointer'
 			create f.make_open_read (fn)
 			create buffer.make (f.count)
-			f.read_to_managed_pointer (buffer, 0, f.count)
+			if f.count > 0 then
+				f.read_to_managed_pointer (buffer, 0, f.count)
+			end
 			f.delete
 				-- Parsing status
 			reset_status_flags
@@ -239,19 +241,25 @@ feature -- Basic operations
 			i: INTEGER_32
 			b: like anchor_block
 		do
-				-- Read all the full blocks
-			from i := 1
-			until i > block_count
-			loop
-				b := i_th_block (i)
+			if byte_count = 0 then
+					-- Handle an empty input; add an all zeros block
+				b := i_th_block (0)
 				blocks.extend (b)
---				extend_block (b)
-				i := i + 1
-			end
-			if has_partial_block then
-				b := partial_block
-				blocks.extend (b)
---				extend_block (b)
+			else
+					-- Read all the full blocks
+				from i := 1
+				until i > block_count
+				loop
+					b := i_th_block (i)
+					blocks.extend (b)
+	--				extend_block (b)
+					i := i + 1
+				end
+				if has_partial_block then
+					b := partial_block
+					blocks.extend (b)
+	--				extend_block (b)
+				end
 			end
 			is_parsed := True
 			pad

@@ -102,7 +102,59 @@ feature {NONE} -- Basic operations
 			assert (s, d ~ a_expected)
 		end
 
+--	build_file (a_name: STRING_8; a_input: STRING_8)
+--			-- Create a test file and hashes file
+--		local
+--			rf: RAW_FILE
+--			f: PLAIN_TEXT_FILE
+--			sha_1: SHA_1
+--			sha_256: SHA_256
+--			sha_224: SHA_224
+--			sha_512: SHA_512
+--			sha_384: SHA_384
+--			sha_512_224: SHA_512_224
+--			sha_512_256: SHA_512_256
+--		do
+--				-- Create the hashers
+--			create sha_1.make_with_string (a_input)
+--			create sha_256.make_with_string (a_input)
+--			create sha_224.make_with_string (a_input)
+--			create sha_512.make_with_string (a_input)
+--			create sha_384.make_with_string (a_input)
+--			create sha_512_224.make_with_string (a_input)
+--			create sha_512_256.make_with_string (a_input)
+--				-- Create and write to file
+--			create f.make_open_write (a_name + ".hashes")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_1:  " + sha_1.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_256:  " + sha_256.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_224:  " + sha_224.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_512:  " + sha_512.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_384:  " + sha_384.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_512_224:  " + sha_512_224.digest.as_hex_string + "%N")
+--			f.put_string ("%N")
+--			f.put_string ("SHA_512_256:  " + sha_512_256.digest.as_hex_string + "%N")
+--			f.close
+--		end
+
 feature -- Basic opeerartions
+
+--	build_test_files
+--			-- Temporary feature to produce hashes for test files
+--		do
+--			build_file ("abc", abc)
+--			build_file ("char_56", char_56)
+--			build_file ("char_62", char_62)
+--			build_file ("bits_896", bits_896)
+--			build_file ("The red fox", sentence)
+--			build_file ("the red (lower case)", lower_t_sentence)
+--			build_file ("One Million As", one_million_a)
+--		end
 
 	test_sha_1
 			-- Test {SHA_1_HASHER} as per FIPS PUB 180-2 (Aug 2002)
@@ -123,7 +175,7 @@ feature -- Basic opeerartions
 				-- Test "the red fox..."  (i.e. lower case "t")
 			test (h, lower_t_sentence, "2755a0a0 b775476f fe6ddac0 b6f8aff3 51f366d6")
 				-- Long message
---			test (h, one_million_a, "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
+			test (h, one_million_a, "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f")
 		end
 
 	test_sha_256
@@ -273,6 +325,31 @@ feature -- Test routines (hash a file)
 			print ("%T computed = " + d + "%N")
 			assert ("SHA_1.digest", d ~ e)
 		end
+
+	hash_raw_file
+			-- Test {SHA_1} on a text file that contains the string "abc".
+		local
+			fn: STRING_8
+			f: RAW_FILE
+			h: SHA_1
+			e: STRING_8
+			d: STRING_8
+		do
+			print_header ("SHA_1.make_with_file_name")
+				-- Create a plain text file
+			fn := "abc.txt"
+			create f.make_create_read_write (fn)
+			f.put_string ("abc")
+			f.close
+			create h.make_with_filename (fn)
+			d := h.digest.as_string
+			e := "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"
+			f.delete
+			print ("%T expected = " + e + "%N")
+			print ("%T computed = " + d + "%N")
+			assert ("SHA_1.digest", d ~ e)
+		end
+
 
 --	hash_large_file
 --		-- Test {SHA-256} from NOOBS file (Raspberry Pi operating system).20015ad")

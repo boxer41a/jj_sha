@@ -52,6 +52,7 @@ feature {NONE} -- Implementation
 			-- done, and place the length vector in the last two bytes of the
 			-- last block.
 		local
+			n: NATURAL_32
 			b: SHA_BLOCK_32
 			i: INTEGER_32
 		do
@@ -78,7 +79,7 @@ feature {NONE} -- Implementation
 				b.put (0, i)
 				i := i + 1
 			end
-				-- Now add the length vectot.  Remember, a block is zero-based
+				-- Now add the length vector.  Remember, a block is zero-based
 			b.put (0, {SHA_BLOCK_32}.words_per_block - 2)
 			b.put ((byte_count * 8).as_natural_32, {SHA_BLOCK_32}.words_per_block - 1)
 			is_padded := True
@@ -132,19 +133,31 @@ feature {NONE} -- Implementation
 	i_th_block (a_index: INTEGER_32): SHA_BLOCK_32
 			-- The `a_index'-th block from the input stream `message'
 		require else
-			index_big_enough: a_index >= 1
+			index_big_enough: a_index >= 0
+			zero_index_implication: a_index = 0 implies byte_count = 0
 			index_small_enough: a_index <= block_count
 		local
 			i: INTEGER_32
 			w: NATURAL_32
 		do
-			create Result
-			from i := 1
-			until i > {SHA_BLOCK_32}.words_per_block
-			loop
-				w := i_th_word (a_index + i)
-				Result.put (w, i - 1)		-- a {SHA_BLOCK} is zero based
-				i := i + 1
+			if a_index = 0 then
+					-- Special case to create an all-zero block
+				create Result
+				from i := 1
+				until i > {SHA_BLOCK_32}.words_per_block
+				loop
+					Result.put (0, i - 1)
+					i := i + 1
+				end
+			else
+				create Result
+				from i := 1
+				until i > {SHA_BLOCK_32}.words_per_block
+				loop
+					w := i_th_word (a_index + i)
+					Result.put (w, i - 1)		-- a {SHA_BLOCK} is zero based
+					i := i + 1
+				end
 			end
 		ensure then
 --			block_is_full: Result.count = anchor_block.words_per_block

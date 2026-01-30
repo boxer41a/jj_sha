@@ -12,6 +12,19 @@ inherit
 
 	SHA_HASHER_64
 
+create
+	default_create,
+	make_with_filename,
+	make_with_string
+
+feature -- Access
+
+	name: STRING_8
+			-- Displayable name of this hasher
+		do
+			Result := "SHA-512"
+		end
+
 feature {NONE} -- Basic operations
 
 	show_variables (t: INTEGER_32; a, b, c, d, e, f, g, h: NATURAL_64)

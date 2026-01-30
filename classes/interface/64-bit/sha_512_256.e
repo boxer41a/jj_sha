@@ -23,15 +23,24 @@ inherit
 
 	SHA_512
 		redefine
+			name,
 			digest_imp
 		end
 
 create
 	default_create,
-	set_with_string,
-	set_with_filename
+	make_with_string,
+	make_with_filename
 
-feature {NONE} -- Anchors
+feature -- Access
+
+	name: STRING_8
+			-- Displayable name of this hasher
+		do
+			Result := "SHA-512/256"
+		end
+
+feature {NONE} -- Implementation
 
 	digest_imp: detachable SHA_512_256_DIGEST
 			-- Implementation of `digest'

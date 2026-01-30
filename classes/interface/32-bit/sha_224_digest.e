@@ -16,6 +16,7 @@ inherit
 
 	SHA_256_DIGEST
 		redefine
+			out,
 			as_hex_string,
 			initialize
 		end
@@ -23,20 +24,7 @@ inherit
 create
 	default_create
 
-feature -- Access
-
-	as_hex_string: STRING_8
-			-- The string representation in hexidecimal of the eight words
-			-- (256 bits = 8 * 32) with a space between the words.
-			-- See FIPS Pub 180-4 (Mar 20-12) page 21.
-		do
-			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
-					word_2.to_hex_string + " " + word_3.to_hex_string + " " +
-					word_4.to_hex_string + " " + word_5.to_hex_string + " " +
-					word_6.to_hex_string
-		end
-
-feature -- Basic operations
+feature {NONE} -- Initialization
 
 	initialize
 			-- Set to initial_values
@@ -50,6 +38,28 @@ feature -- Basic operations
 			word_5 := 0x68581511
 			word_6 := 0x64f98fa7
 			word_7 := 0xbefa4fa4
+		end
+
+feature -- Access
+
+	out: STRING_8
+			-- The words of Current condensed into a string with no spaces.
+		do
+			Result := word_0.to_hex_string + word_1.to_hex_string +
+						word_2.to_hex_string + word_3.to_hex_string +
+						word_4.to_hex_string + word_5.to_hex_string +
+						word_6.to_hex_string
+		end
+
+	as_hex_string: STRING_8
+			-- The string representation in hexidecimal of the eight words
+			-- (256 bits = 8 * 32) with a space between the words.
+			-- See FIPS Pub 180-4 (Mar 20-12) page 21.
+		do
+			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
+					word_2.to_hex_string + " " + word_3.to_hex_string + " " +
+					word_4.to_hex_string + " " + word_5.to_hex_string + " " +
+					word_6.to_hex_string
 		end
 
 end

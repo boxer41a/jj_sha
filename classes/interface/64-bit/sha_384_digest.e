@@ -16,6 +16,7 @@ inherit
 
 	SHA_512_DIGEST
 		redefine
+			out,
 			as_hex_string,
 			initialize
 		end
@@ -23,17 +24,7 @@ inherit
 create
 	default_create
 
-feature -- Access
-
-	as_hex_string: STRING
-			-- The words as string seperated by a space between each
-		do
-			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
-					word_2.to_hex_string + " " + word_3.to_hex_string + " " +
-					word_4.to_hex_string + " " + word_5.to_hex_string
-		end
-
-feature -- Basic operations
+feature {NONE} -- Initialization
 
 	initialize
 			-- Set to initial_values
@@ -47,6 +38,24 @@ feature -- Basic operations
 			word_5 := 0x8eb44a8768581511
 			word_6 := 0xdb0c2e0d64f98fa7
 			word_7 := 0x47b5481dbefa4fa4
+		end
+		
+feature -- Access
+
+	out: STRING_8
+			-- The words of Current condensed into a string with no spaces.
+		do
+			Result := word_0.to_hex_string + word_1.to_hex_string +
+						word_2.to_hex_string + word_3.to_hex_string +
+						word_4.to_hex_string + word_5.to_hex_string
+		end
+
+	as_hex_string: STRING
+			-- The words as string seperated by a space between each
+		do
+			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
+					word_2.to_hex_string + " " + word_3.to_hex_string + " " +
+					word_4.to_hex_string + " " + word_5.to_hex_string
 		end
 
 end

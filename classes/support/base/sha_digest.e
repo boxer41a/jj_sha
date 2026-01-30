@@ -20,6 +20,8 @@ deferred class
 inherit
 
 	HASHABLE
+		undefine
+			out
 		redefine
 			default_create
 		end
@@ -32,12 +34,12 @@ feature {NONE} -- Iniitialization
 			initialize
 		end
 
-feature -- Initialize
-
 	initialize
 			-- Set to initial values
 		deferred
 		end
+
+feature -- Access
 
 	as_hex_string: STRING_8
 			-- The words of Current as hexidecimal strings with

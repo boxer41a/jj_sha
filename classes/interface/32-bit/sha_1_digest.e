@@ -14,9 +14,6 @@ class
 inherit
 
 	SHA_DIGEST_32
-		redefine
-			out
-		end
 
 create
 	default_create	-- calls `initialize'
@@ -38,7 +35,7 @@ feature {NONE} -- Initialization
 feature -- Access
 
 	out: STRING_8
-			-- String representation of the state of Current
+			-- The words of Current condensed into a string with no spaces.
 		do
 			Result := word_0.to_hex_string + word_1.to_hex_string +
 						word_2.to_hex_string + word_3.to_hex_string +
@@ -54,8 +51,5 @@ feature -- Access
 						word_2.to_hex_string + " " + word_3.to_hex_string + " " +
 						word_4.to_hex_string
 		end
-
-feature -- Basic operations
-
 
 end

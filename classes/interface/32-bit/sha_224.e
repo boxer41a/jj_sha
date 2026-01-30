@@ -13,8 +13,19 @@ inherit
 
 	SHA_256
 		redefine
+			name,
 			digest_imp
 		end
+
+create
+	default_create,
+	make_with_filename,
+	make_with_string
+
+feature -- Access
+
+	name: STRING_8 = "SHA-224"
+			-- Displayable name of this hasher
 
 feature {NONE} -- Basic operations
 

@@ -20,6 +20,11 @@ create
 	make_with_filename,
 	make_with_string
 
+feature -- Access
+
+	name: STRING_8 = "SHA-1"
+			-- Displayable name of this hasher
+
 feature {NONE} -- Basic operations
 
 	show_hex (t: INTEGER_32; a, b, c, d, e: NATURAL_32)

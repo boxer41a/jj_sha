@@ -16,23 +16,12 @@ inherit
 
 	SHA_512_DIGEST
 		redefine
+			out,
 			as_hex_string,
 			initialize
 		end
 
-feature -- Access
-
-	as_hex_string: STRING_8
-			-- The string representation in hexidecimal of the 4 words
-			-- (256 bits = 4 * 64) with a space between the words.
-			-- FIPS Pub 180-4 (Mar 20-12) page 26.
-		do
-			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
-						word_2.to_hex_string + " " + word_3.to_hex_string
-
-		end
-
-feature -- Basic operations
+feature {NONE} -- Initialization
 
 	initialize
 			-- Set to initial_values
@@ -46,6 +35,25 @@ feature -- Basic operations
 			word_5 := 0xBE5E1E2553863992
 			word_6 := 0x2B0199FC2C85B8AA
 			word_7 := 0x0EB72DDC81C52CA2
+		end
+
+feature -- Access
+
+	out: STRING_8
+			-- The words of Current condensed into a string with no spaces.
+		do
+			Result := word_0.to_hex_string + word_1.to_hex_string +
+						word_2.to_hex_string + word_3.to_hex_string
+		end
+
+	as_hex_string: STRING_8
+			-- The string representation in hexidecimal of the 4 words
+			-- (256 bits = 4 * 64) with a space between the words.
+			-- FIPS Pub 180-4 (Mar 20-12) page 26.
+		do
+			Result := word_0.to_hex_string + " " + word_1.to_hex_string + " " +
+						word_2.to_hex_string + " " + word_3.to_hex_string
+
 		end
 
 end

@@ -25,6 +25,11 @@ inherit
 
 feature -- Access
 
+	name: STRING_8
+			-- The displayable name of this hasher type
+		deferred
+		end
+		
 	frozen digest: attached like digest_imp
 			-- The result of the computation.
 			-- Reset when `message' is changed.

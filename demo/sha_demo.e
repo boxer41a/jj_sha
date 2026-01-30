@@ -173,7 +173,7 @@ feature {NONE} -- Initialization
 			t.test_sha_512_256
 
 			t.hash_text_file
---			t.hash_raw_file
+			t.hash_raw_file
 --			t.hash_large_file
 
 			io.new_line
