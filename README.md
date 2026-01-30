@@ -1,5 +1,5 @@
 # jj_sha
-###An Eiffel implementation of Secure Hash Algorithms
+### An Eiffel implementation of Secure Hash Algorithms
 
 This repository contains classes for calculating various SHA hashes, conforming to [FIPS Pub 180-4 (Mar 2012)](./docs/FIPS PUB 180-4 (Mar 2012).pdf).  All the neccessary classes are in the [classes](./classes) directory.  To use the library, include [jj_sha.ecf](./classes/jj_sha.ecf) in a project.  
 
@@ -19,7 +19,7 @@ This library provides classes for calculating SHA-1, SHA-256, SHA-512, SHA-224, 
 	border="2px solid"
 />
 
-###Example Use
+### Example Use
 
 Create an object of the type corresponding to the desired encryption (i.e. SHA-1, SHA-256, etc.), set the string or file message to be hashed, and then query the parser for the digest.  Multiple queries will return the same message digest.
 
@@ -53,10 +53,10 @@ The output of the above code is:
 
 Note that a small change, the first letter of the input changed to lower case, produced a large change in the computed digest.
 
-###Demo
+### Demo
 The demo program [SHA_DEMO](./demo/sha_demo.e) uses [SHA_TESTS](./demo/sha_tests.e), to display feature calls and the results of the calls.  It also verifies the output digests against values given in the FIPS PUB or from other hasher programs.  When the demo system is open in [EiffelStudio](www.eiffel.com), you can also execute some features in [AutoTest](https://www.eiffel.org/doc/eiffelstudio/AutoTest).
 
-###Utility
+### Utility
 A [GUI Utility](./demo_gui) that demonstrates the cluster and serves as a useful tool for checking know hash against a hash generated from a string or a file can be build using [sha\_gui\_utility.ecf](./demo_gui/sha_gui_utility.ecf).  A MacOS executable is included in the [Executables](./Executables) directory.
 
 <img 
@@ -68,7 +68,7 @@ A [GUI Utility](./demo_gui) that demonstrates the cluster and serves as a useful
 />
 
 
-#Experimental Cluster
+# Experimental Cluster
 Though not required but useful as an academic exercise and historical record, this repository also includes an implementation of the SHA library that demonstrates the use of the [JJ_NATURAL classes](http://github.com/boxer41a/jj_naturals) as an override cluster.  It was a first attempt at the SHA library and also showed how a common ancestor to the NATURAL\_xxx classes could be incorporated into the base library hierarchy.  Using the JJ\_NATURAL cluster reduced the number of classes and eliminated code duplication.  Notice the use of the generic parameter, JJ\_NATURAL, in the class diagram.
 
 <img 
