@@ -79,7 +79,7 @@ Though not required but useful as an academic exercise and historical record, th
 	border="2px solid"
 />
 
-A class if particular interest is SHA\_FUNCRTIONS\_COMMON.  Both 64-bit and 32-bit functions are defined in this class and anchored to type type of the generic parameter.  Descendent classes redefine the anchor to a concrete type, NATURAL_64 or NATURAL_32, and all the features follow.
+A class if particular interest is SHA\_FUNCTIONS\_COMMON.  Both 64-bit and 32-bit functions are defined in this class and anchored to type type of the generic parameter.  Descendent classes redefine the anchor to a concrete type, NATURAL_64 or NATURAL_32, and all the features follow.
 
 
 
