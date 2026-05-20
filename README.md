@@ -1,7 +1,7 @@
 # jj_sha
 ### An Eiffel implementation of Secure Hash Algorithms
 
-This repository contains classes for calculating various SHA hashes, conforming to [FIPS Pub 180-4 (Mar 2012)](./docs/FIPS PUB 180-4 (Mar 2012).pdf).  All the neccessary classes are in the [classes](./classes) directory.  To use the library, include [jj_sha.ecf](./classes/jj_sha.ecf) in a project.  
+This repository contains classes for calculating various SHA hashes, conforming to [FIPS Pub 180-4 (Mar 2012)](<./docs/FIPS PUB 180-4 (Mar 2012).pdf>).  All the neccessary classes are in the [classes](./classes) directory.  To use the library, include [jj_sha.ecf](./classes/jj_sha.ecf) in a project.  
 
 This library provides classes for calculating SHA-1, SHA-256, SHA-512, SHA-224, SHA-384, SHA-512/256, and SHA-256/224 hashes (i.e. a message digest) from string or file input.  The [interface classes](./classes/interface), shown below the [support classes](./classes/support) in the diagram include:  
 
