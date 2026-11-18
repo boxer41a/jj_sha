@@ -14,7 +14,7 @@
 		<setting name="console_application" value="true"/>
 		<setting name="total_order_on_reals" value="false"/>
 		<setting name="dead_code_removal" value="feature"/>
-		<library name="base" location="$ISE_LIBRARY\library\base\base.ecf"/>
+		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
 		<cluster name="classes" location=".\" recursive="false">
 			<cluster name="interface" location=".\interface\" recursive="true"/>
 			<cluster name="support" location=".\support\" recursive="true"/>
